@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How LLMs Actually Work — From Tokens to Intelligence</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 100vw; height: 100vh; overflow: hidden;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #060912;
+    user-select: none;
+    display: flex; flex-direction: column;
+  }
+
+  /* ===== DECK ===== */
+  .deck { flex: 1; position: relative; overflow: hidden; min-height: 0; }
+  .slides { position: relative; width: 100%; height: 100%; }
+
+  .slide {
+    position: absolute; inset: 0;
+    background: linear-gradient(155deg, #0d1321 0%, #141b2d 40%, #1a1f2e 100%);
+    overflow-y: auto; overflow-x: hidden;
+    display: none; flex-direction: column;
+    padding: clamp(22px, 3.5vh, 42px) clamp(18px, 4.5vw, 56px);
+  }
+  .slide.active { display: flex; }
+
+  .slide::before {
+    content: ''; position: absolute; pointer-events: none;
+    top: -10%; right: -8%;
+    width: 38vw; height: 38vw;
+    background: radial-gradient(circle, rgba(99,102,241,0.06) 0%, transparent 70%);
+    border-radius: 50%; z-index: 0;
+  }
+  .slide > * { position: relative; z-index: 1; flex-shrink: 0; }
+
+  /* ===== NAV ===== */
+  .nav-bar {
+    flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+    gap: 20px; height: 50px; background: #060912;
+    border-top: 1px solid rgba(255,255,255,0.05);
+  }
+  .nav-btn {
+    width: 34px; height: 34px; border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.04);
+    color: #94a3b8; font-size: 15px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  .nav-btn:hover { background: rgba(99,102,241,0.2); border-color: rgba(99,102,241,0.4); color: #e2e8f0; }
+  .nav-btn:disabled { opacity: 0.3; cursor: default; }
+  .slide-counter { color: #64748b; font-size: 13px; font-weight: 500; min-width: 50px; text-align: center; }
+
+  /* ===== TYPOGRAPHY ===== */
+  .slide-label {
+    font-size: clamp(9px, 0.9vw, 11px); font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; margin-bottom: 4px;
+    color: #818cf8;
+  }
+  h1 {
+    font-size: clamp(22px, 2.8vw, 36px); font-weight: 800; color: #f1f5f9; letter-spacing: -0.5px;
+  }
+  h1 span.gradient-text {
+    background: linear-gradient(135deg, #818cf8, #a78bfa);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  h2 {
+    font-size: clamp(18px, 2.2vw, 26px); font-weight: 700; color: #f1f5f9; margin-bottom: 12px;
+  }
+  h3 { font-size: clamp(14px, 1.5vw, 17px); font-weight: 700; color: #e2e8f0; margin-bottom: 4px; }
+  h4 { font-size: clamp(12px, 1.2vw, 14px); font-weight: 700; color: #e2e8f0; margin-bottom: 2px; }
+  .subtitle { font-size: clamp(12px, 1.2vw, 14px); color: #94a3b8; line-height: 1.5; max-width: 680px; }
+  .body-text { font-size: clamp(11px, 1.05vw, 13px); color: #cbd5e1; line-height: 1.55; }
+  .slide-meta { text-align: right; font-size: clamp(10px, 0.85vw, 11px); color: #475569; }
+  .mono {
+    font-family: 'JetBrains Mono', 'Consolas', monospace;
+    background: rgba(255,255,255,0.06); padding: 1px 6px; border-radius: 3px;
+    font-size: 0.9em; color: #a5b4fc;
+  }
+
+  /* ===== SLIDE 1 — TITLE ===== */
+  .s1-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: clamp(14px, 2.5vh, 26px); }
+  .s1-toc {
+    display: grid; grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: clamp(8px, 1.2vh, 14px);
+    margin-top: clamp(16px, 3vh, 28px);
+  }
+  .s1-toc-item {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 10px; padding: clamp(14px, 2vh, 20px);
+    text-align: center;
+  }
+  .s1-toc-num {
+    font-size: clamp(24px, 3vw, 32px); font-weight: 900;
+    color: #818cf8; margin-bottom: 6px;
+  }
+  .s1-toc-item h4 { font-size: clamp(11px, 1vw, 13px); color: #e2e8f0; margin-bottom: 4px; }
+  .s1-toc-item p { font-size: clamp(9px, 0.8vw, 10px); color: #64748b; line-height: 1.3; }
+
+  /* ===== STAT GRID ===== */
+  .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(6px, 1vh, 10px); }
+  .stat-card {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px; padding: clamp(10px, 1.5vh, 14px);
+  }
+  .stat-value {
+    font-size: clamp(16px, 1.8vw, 22px); font-weight: 800; margin-bottom: 2px;
+    font-family: 'JetBrains Mono', 'Consolas', monospace;
+  }
+  .stat-value.accent { color: #818cf8; }
+  .stat-value.amber { color: #fbbf24; }
+  .stat-label { font-size: clamp(9px, 0.8vw, 10px); color: #94a3b8; line-height: 1.35; }
+
+  /* ===== DEEP DIVE LAYOUT ===== */
+  .dd-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: clamp(10px, 1.8vh, 18px); flex-shrink: 0; }
+  .dd-content { display: flex; gap: clamp(14px, 2.5vw, 28px); flex: 1; min-height: 0; }
+  .dd-left { flex: 1; min-width: 0; }
+  .dd-right { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  .dd-full { flex: 1; min-width: 0; }
+
+  /* ===== CODE BLOCK ===== */
+  .code-block {
+    background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px; padding: clamp(10px, 1.5vh, 14px);
+    font-family: 'JetBrains Mono', 'Consolas', monospace;
+    font-size: clamp(10px, 0.95vw, 12px); color: #cbd5e1;
+    line-height: 1.6; white-space: pre-wrap; word-break: break-all;
+    margin-bottom: clamp(8px, 1.2vh, 12px);
+  }
+  .code-comment { color: #6b7280; }
+  .code-highlight { color: #a5b4fc; font-weight: 600; }
+  .code-token { color: #fbbf24; }
+  .code-num { color: #34d399; }
+
+  /* ===== PROCESS FLOW ===== */
+  .flow-row {
+    display: flex; align-items: center; gap: clamp(4px, 0.8vw, 8px);
+    justify-content: center; margin: clamp(8px, 1.5vh, 14px) 0;
+    flex-wrap: wrap;
+  }
+  .flow-step {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px; padding: clamp(8px, 1.2vh, 12px) clamp(10px, 1.5vw, 16px);
+    text-align: center;
+  }
+  .flow-step .step-name { font-size: clamp(10px, 0.9vw, 12px); font-weight: 700; color: #e2e8f0; margin-bottom: 2px; }
+  .flow-step .step-desc { font-size: clamp(8px, 0.7vw, 10px); color: #94a3b8; }
+  .flow-arrow { color: #6366f1; font-size: clamp(14px, 1.5vw, 18px); font-weight: 700; flex-shrink: 0; }
+
+  /* ===== KEY POINTS ===== */
+  .key-points { list-style: none; flex: 1; overflow-y: auto; }
+  .key-points li {
+    padding: clamp(4px, 0.65vh, 6px) 0; padding-left: 18px;
+    position: relative; font-size: clamp(10px, 0.95vw, 12px); color: #cbd5e1;
+    line-height: 1.5; border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .key-points li::before {
+    content: ''; position: absolute; left: 0; top: clamp(7px, 0.9vh, 9px);
+    width: 6px; height: 6px; border-radius: 50%; background: #818cf8;
+  }
+
+  /* ===== GLOSSARY GRID ===== */
+  .glossary-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: clamp(8px, 1.2vh, 12px); margin-top: clamp(10px, 1.5vh, 16px); }
+  .glossary-card {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 8px; padding: clamp(10px, 1.5vh, 14px);
+  }
+  .glossary-card h4 {
+    font-size: clamp(11px, 1vw, 13px); font-weight: 700; color: #a5b4fc;
+    font-family: 'JetBrains Mono', 'Consolas', monospace; margin-bottom: 4px;
+  }
+  .glossary-card p { font-size: clamp(9px, 0.8vw, 11px); color: #94a3b8; line-height: 1.45; }
+
+  /* ===== TWO-COL LAYOUT ===== */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(12px, 2vw, 24px); flex: 1; }
+
+  /* ===== DIAGRAM BOX ===== */
+  .diagram-box {
+    background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 10px; padding: clamp(12px, 2vh, 18px);
+    margin: clamp(8px, 1.2vh, 12px) 0;
+  }
+  .diagram-box h4 { color: #a5b4fc; margin-bottom: 8px; }
+  .diagram-row {
+    display: flex; align-items: center; justify-content: center;
+    gap: clamp(4px, 0.6vw, 6px); flex-wrap: wrap;
+    font-family: 'JetBrains Mono', 'Consolas', monospace;
+    font-size: clamp(9px, 0.8vw, 11px);
+  }
+  .diagram-cell {
+    background: rgba(99,102,241,0.15); border: 1px solid rgba(129,140,248,0.3);
+    border-radius: 4px; padding: 3px 8px; color: #a5b4fc;
+  }
+  .diagram-cell.high { background: rgba(99,102,241,0.25); border-color: rgba(129,140,248,0.5); }
+
+  /* ===== IMPLICATION BOX ===== */
+  .implication-box {
+    margin-top: auto; padding: clamp(7px, 1vh, 10px) 12px;
+    border-radius: 8px; flex-shrink: 0;
+    background: rgba(129,140,248,0.06); border: 1px solid rgba(129,140,248,0.2);
+  }
+  .implication-box h4 { color: #a5b4fc; font-size: clamp(10px, 0.9vw, 11px); margin-bottom: 2px; }
+  .implication-box p { font-size: clamp(9px, 0.85vw, 10px); color: #c4b5fd; line-height: 1.45; }
+
+  /* ===== TABLE ===== */
+  .param-table {
+    width: 100%; border-collapse: collapse;
+    font-size: clamp(10px, 0.9vw, 12px);
+    margin: clamp(6px, 1vh, 10px) 0;
+  }
+  .param-table th {
+    text-align: left; padding: 6px 10px;
+    color: #94a3b8; font-weight: 600; font-size: 10px;
+    text-transform: uppercase; letter-spacing: 1px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .param-table td {
+    padding: 5px 10px; color: #cbd5e1;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-family: 'JetBrains Mono', 'Consolas', monospace;
+  }
+  .param-table td:first-child { color: #e2e8f0; }
+
+  /* Footer */
+  .slide-footer {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: auto; padding-top: clamp(6px, 1.2vh, 12px); flex-shrink: 0;
+    font-size: clamp(9px, 0.75vw, 10px); color: #475569;
+  }
+  .slide-footer .tag { background: rgba(255,255,255,0.05); color: #64748b; padding: 2px 8px; border-radius: 4px; }
+
+  /* Comparison cards */
+  .compare-row { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(8px, 1.2vh, 12px); margin: clamp(6px, 1vh, 10px) 0; }
+  .compare-card {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px; padding: clamp(10px, 1.5vh, 14px);
+  }
+  .compare-card h4 { font-size: clamp(11px, 1vw, 13px); margin-bottom: 6px; }
+  .compare-card ul { list-style: none; }
+  .compare-card ul li {
+    font-size: clamp(10px, 0.85vw, 11px); color: #94a3b8; line-height: 1.5;
+    padding: 2px 0; padding-left: 12px; position: relative;
+  }
+  .compare-card ul li::before { content: '•'; position: absolute; left: 0; color: #6366f1; }
+
+  @media print {
+    body { overflow: visible; background: #060912; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .slide { position: relative !important; display: flex !important; margin-bottom: 25px; height: auto !important; }
+    .nav-bar { display: none; }
+    .deck { flex: none; height: auto !important; }
+  }
+
+  /* Animation for attention diagram */
+  .attn-diagram {
+    display: flex; align-items: center; justify-content: center; gap: 12px;
+    margin: clamp(8px, 1.5vh, 14px) 0; flex-wrap: wrap;
+  }
+  .attn-word {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 6px; padding: 6px 10px; text-align: center;
+    font-size: clamp(10px, 0.9vw, 12px); color: #e2e8f0; font-weight: 600;
+    transition: all 0.3s;
+  }
+  .attn-word.query { border-color: rgba(129,140,248,0.5); background: rgba(99,102,241,0.15); }
+  .attn-word.attend { border-color: rgba(251,191,36,0.4); background: rgba(251,191,36,0.08); }
+  .attn-lines { position: relative; }
+  .attn-weight {
+    font-family: 'JetBrains Mono', monospace; color: #fbbf24;
+    font-size: clamp(8px, 0.7vw, 10px); text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<div class="deck"><div class="slides">
+
+<!-- ===== SLIDE 1: TITLE ===== -->
+<div class="slide active" data-index="1">
+  <div class="s1-row">
+    <div>
+      <div class="slide-label">LLM Fundamentals</div>
+      <h1>How <span class="gradient-text">LLMs Actually Work</span></h1>
+    </div>
+    <div class="slide-meta">AI Knowledge Library<br>artefacts/llm-fundamentals</div>
+  </div>
+  <p class="subtitle" style="margin-bottom:8px;">
+    Large Language Models can feel like magic — but they're built from a series of elegant, learnable ideas.
+    This deck walks through the core concepts: tokenisation, embeddings, attention, transformers, training, and inference.
+    No advanced math required — just clear explanations and concrete examples.
+  </p>
+  <div class="s1-toc">
+    <div class="s1-toc-item"><div class="s1-toc-num">1</div><h4>Tokenisation</h4><p>How text becomes numbers the model can process</p></div>
+    <div class="s1-toc-item"><div class="s1-toc-num">2</div><h4>Embeddings</h4><p>How tokens become meaning — vectors in semantic space</p></div>
+    <div class="s1-toc-item"><div class="s1-toc-num">3</div><h4>Attention</h4><p>The breakthrough — how models "pay attention" to context</p></div>
+    <div class="s1-toc-item"><div class="s1-toc-num">4</div><h4>Transformers</h4><p>The architecture that powers every modern LLM</p></div>
+    <div class="s1-toc-item"><div class="s1-toc-num">5</div><h4>Training</h4><p>How models learn from internet-scale text</p></div>
+    <div class="s1-toc-item"><div class="s1-toc-num">6</div><h4>Inference</h4><p>How models generate text one token at a time</p></div>
+    <div class="s1-toc-item"><div class="s1-toc-num">7</div><h4>Hallucination</h4><p>Why LLMs make things up and what we can do about it</p></div>
+    <div class="s1-toc-item"><div class="s1-toc-num">8</div><h4>Glossary</h4><p>Key terms and one-line definitions</p></div>
+  </div>
+  <div class="slide-footer"><span>AI Knowledge Library · github.com/kantan-sys/ai-knowledge-lib</span><span class="tag">1 / 8</span></div>
+</div>
+
+<!-- ===== SLIDE 2: TOKENISATION ===== -->
+<div class="slide" data-index="2">
+  <div class="dd-header">
+    <div><div class="slide-label">Part 1</div><h2>Tokenisation</h2></div>
+    <div class="slide-meta">Turning text into numbers</div>
+  </div>
+  <div class="dd-content">
+    <div class="dd-left">
+      <p class="body-text" style="margin-bottom:10px;">
+        Models can't read text — they understand <strong style="color:#a5b4fc;">numbers</strong>. Tokenisation is the process of breaking text into small pieces (tokens) and mapping each token to a numeric ID. Modern LLMs use <strong style="color:#a5b4fc;">Byte-Pair Encoding</strong> (BPE), which learns the most efficient subword vocabulary from training data.
+      </p>
+
+      <h4 style="color:#e2e8f0;margin-bottom:6px;">Example: "Hello, world! How are you?"</h4>
+      <div class="code-block">
+<span class="code-comment">// GPT-4 tokenizer (cl100k_base)</span>
+"Hello, world! How are you?"
+    ↓
+[<span class="code-token">15496</span>, <span class="code-comment">11</span>, <span class="code-token">1917</span>, <span class="code-comment">0</span>, <span class="code-token">2437</span>, <span class="code-token">527</span>, <span class="code-token">499</span>, <span class="code-comment">30</span>]
+
+<span class="code-comment">// Decoded back:</span>
+<span class="code-highlight">15496</span> → "Hello"    <span class="code-highlight">11</span> → ","
+<span class="code-highlight">1917</span>  → " world"   <span class="code-highlight">0</span>  → "!"
+<span class="code-highlight">2437</span>  → " How"     <span class="code-highlight">527</span> → " are"
+<span class="code-highlight">499</span>   → " you"     <span class="code-highlight">30</span>  → "?"
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-card"><div class="stat-value accent">100K+</div><div class="stat-label">Typical BPE vocabulary size for frontier LLMs (GPT-4: ~100K, Claude: ~150K)</div></div>
+        <div class="stat-card"><div class="stat-value accent">~0.75</div><div class="stat-label">Average tokens per English word. "Antidisestablishmentarianism" = ~5 tokens</div></div>
+        <div class="stat-card"><div class="stat-value amber">⚠️</div><div class="stat-label">Tokenizer quirks matter: LLMs can't count letters in "strawberry" because they see tokens, not characters</div></div>
+        <div class="stat-card"><div class="stat-value amber">$</div><div class="stat-label">API pricing is per token — understanding tokenisation directly affects your costs</div></div>
+      </div>
+    </div>
+    <div class="dd-right">
+      <h4 style="color:#e2e8f0;margin-bottom:8px;">How BPE Works</h4>
+      <div class="flow-row">
+        <div class="flow-step"><div class="step-name">Start</div><div class="step-desc">Every character<br>is a token</div></div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step"><div class="step-name">Count pairs</div><div class="step-desc">Find most frequent<br>adjacent pair</div></div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step"><div class="step-name">Merge</div><div class="step-desc">Replace pair with<br>new combined token</div></div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step"><div class="step-name">Repeat</div><div class="step-desc">Until vocabulary<br>hits target size</div></div>
+      </div>
+
+      <h4 style="color:#e2e8f0;margin-bottom:6px;margin-top:10px;">Why Tokenisation Matters</h4>
+      <ul class="key-points">
+        <li><strong>Context window</strong> is measured in tokens, not words. 128K tokens ≈ 96K English words ≈ a 384-page book</li>
+        <li><strong>Multilingual inequality.</strong> "Hello" = 1 token. "こんにちは" = 3 tokens. Non-English languages cost more and fill context faster</li>
+        <li><strong>Code is token-hungry.</strong> Python/JSON with lots of whitespace and special chars generates ~2× more tokens than prose</li>
+        <li><strong>Special tokens</strong> control model behaviour: <span class="mono"><|endoftext|></span>, <span class="mono"><|user|></span>, <span class="mono"><|assistant|></span></li>
+        <li><strong>Images become tokens too.</strong> Multimodal models like GPT-4o tokenise images into "visual tokens"</li>
+      </ul>
+
+      <div class="implication-box"><h4>💡 Key Insight</h4><p>Tokenisation is the bridge between human language and machine computation. Every quirk of the tokenizer — from counting errors to multilingual bias — propagates into the model's behaviour.</p></div>
+    </div>
+  </div>
+  <div class="slide-footer"><span>AI Knowledge Library · github.com/kantan-sys/ai-knowledge-lib</span><span class="tag">2 / 8</span></div>
+</div>
+
+<!-- ===== SLIDE 3: EMBEDDINGS ===== -->
+<div class="slide" data-index="3">
+  <div class="dd-header">
+    <div><div class="slide-label">Part 2</div><h2>Embeddings</h2></div>
+    <div class="slide-meta">Tokens become meaning</div>
+  </div>
+  <div class="dd-content">
+    <div class="dd-left">
+      <p class="body-text" style="margin-bottom:10px;">
+        A token ID is just a number — it has no meaning. <strong style="color:#a5b4fc;">Embeddings</strong> are dense vectors (lists of numbers) that capture the <strong style="color:#a5b4fc;">semantic meaning</strong> of a token. Words with similar meanings end up close together in "embedding space."
+      </p>
+
+      <div class="diagram-box">
+        <h4>How Embeddings Work</h4>
+        <p class="body-text" style="margin-bottom:6px;">Each token ID looks up a vector from the embedding matrix — a giant lookup table learned during training:</p>
+        <div class="code-block" style="margin:0;">
+<span class="code-comment">// Token 15496 ("Hello") → Embedding vector (simplified to 8 dims)</span>
+15496 → [<span class="code-num">0.12</span>, <span class="code-num">-0.45</span>, <span class="code-num">0.78</span>, <span class="code-num">0.03</span>, <span class="code-num">-0.91</span>, <span class="code-num">0.56</span>, <span class="code-num">-0.23</span>, <span class="code-num">0.67</span>]
+
+<span class="code-comment">// Real embedding dimensions:</span>
+GPT-3:  <span class="code-highlight">12,288</span> dims
+GPT-4:  <span class="code-highlight">~16,384+</span> dims (estimated)
+Llama 3:<span class="code-highlight">4,096</span> dims (8B) / <span class="code-highlight">8,192</span> dims (70B)
+        </div>
+      </div>
+
+      <h4 style="color:#e2e8f0;margin-bottom:6px;margin-top:8px;">Semantic Similarity: Cosine Similarity</h4>
+      <p class="body-text">
+        Two vectors pointing in the same direction = similar meaning. Cosine similarity measures the angle between vectors:
+      </p>
+      <div class="code-block">
+<span class="code-comment">// These pairs have HIGH cosine similarity:</span>
+cos("king",   "queen")   = <span class="code-num">0.82</span>
+cos("dog",    "puppy")   = <span class="code-num">0.88</span>
+cos("happy",  "joyful")  = <span class="code-num">0.91</span>
+
+<span class="code-comment">// These pairs have LOW cosine similarity:</span>
+cos("king",   "banana")  = <span class="code-num">0.03</span>
+cos("run",    "elephant")= <span class="code-num">0.08</span>
+      </div>
+    </div>
+    <div class="dd-right">
+      <h4 style="color:#e2e8f0;margin-bottom:8px;">The Famous Analogy: king − man + woman ≈ queen</h4>
+      <p class="body-text" style="margin-bottom:8px;">
+        Embeddings capture <strong>semantic relationships as vector arithmetic</strong>. The vector from "man" to "king" points in the same direction as the vector from "woman" to "queen" — the royal dimension.
+      </p>
+      <div class="code-block">
+<span class="code-comment">// Vector arithmetic in embedding space:</span>
+embedding("king")  - embedding("man")  + embedding("woman")
+    ≈ embedding("queen")    ✅
+
+<span class="code-comment">// Other examples:</span>
+paris  - france  + italy     ≈ rome
+walking - walk   + swim      ≈ swimming
+      </div>
+
+      <h4 style="color:#e2e8f0;margin-bottom:6px;margin-top:8px;">What Embeddings Encode</h4>
+      <ul class="key-points">
+        <li><strong>Semantic similarity</strong> — "cat" and "feline" are close together</li>
+        <li><strong>Analogies</strong> — direction vectors capture relationships like gender, tense, capital-of</li>
+        <li><strong>Context.</strong> The same word gets different embeddings depending on surrounding text ("bank" as river vs. financial institution)</li>
+        <li><strong>Cross-lingual alignment.</strong> "Hello", "Hola", "こんにちは" cluster together despite different tokenizers</li>
+        <li><strong>Multimodal.</strong> CLIP-style models embed text and images in the same space — a photo of a dog is close to the word "dog"</li>
+      </ul>
+
+      <div class="implication-box"><h4>💡 Key Insight</h4><p>Embeddings transform discrete symbols (words) into a continuous, mathematically manipulable space. This is the foundation that makes everything else — attention, generation, reasoning — possible.</p></div>
+    </div>
+  </div>
+  <div class="slide-footer"><span>AI Knowledge Library · github.com/kantan-sys/ai-knowledge-lib</span><span class="tag">3 / 8</span></div>
+</div>
+
+<!-- ===== SLIDE 4: ATTENTION ===== -->
+<div class="slide" data-index="4">
+  <div class="dd-header">
+    <div><div class="slide-label">Part 3 · The Breakthrough</div><h2>Attention</h2></div>
+    <div class="slide-meta">"Attention Is All You Need" (2017)</div>
+  </div>
+  <div class="dd-content">
+    <div class="dd-left">
+      <p class="body-text" style="margin-bottom:10px;">
+        Before attention (RNNs, LSTMs), models processed text <strong>sequentially</strong> — one word at a time. This was slow and couldn't capture long-range dependencies. <strong style="color:#a5b4fc;">Self-attention</strong> lets every word look at every other word <strong>simultaneously</strong>.
+      </p>
+
+      <h4 style="color:#e2e8f0;margin-bottom:6px;">The Core Idea: Query, Key, Value</h4>
+      <div class="diagram-box" style="margin-bottom:8px;">
+        <p class="body-text" style="margin-bottom:6px;">
+          Think of it like a <strong>search engine for words</strong>:
+        </p>
+        <table class="param-table" style="margin-bottom:0;">
+          <tr><td><strong>Query (Q)</strong></td><td style="font-family:Inter,sans-serif;">"What am I looking for?" — the current word's question</td></tr>
+          <tr><td><strong>Key (K)</strong></td><td style="font-family:Inter,sans-serif;">"What do I contain?" — every word's label</td></tr>
+          <tr><td><strong>Value (V)</strong></td><td style="font-family:Inter,sans-serif;">"What information do I have?" — the actual content to aggregate</td></tr>
+        </table>
+        <p class="body-text" style="margin-top:6px;font-size:clamp(9px,0.8vw,11px);">
+          Attention(Q,K,V) = softmax(QK<sup>T</sup> / √d) × V — the scaled dot-product attention formula
+        </p>
+      </div>
+
+      <h4 style="color:#e2e8f0;margin-bottom:6px;">Concrete Example: "The cat sat on the mat because it was tired"</h4>
+      <p class="body-text" style="margin-bottom:4px;">Word "it" needs to know what it refers to. Attention weights show which words "it" is paying attention to:</p>
+      <div class="attn-diagram">
+        <div class="attn-word">The</div>
+        <div class="attn-word">cat</div>
+        <div class="attn-word">sat</div>
+        <div class="attn-word">on</div>
+        <div class="attn-word">the</div>
+        <div class="attn-word">mat</div>
+        <div class="attn-word">because</div>
+        <div class="attn-word query">it</div>
+        <div class="attn-word">was</div>
+        <div class="attn-word">tired</div>
+      </div>
+      <div class="code-block" style="margin-top:4px;">
+<span class="code-comment">// Attention weights for "it" (simplified):</span>
+<span class="code-highlight">"cat"</span>    → 0.62  ████████████████████████  <span class="code-comment">← It's the cat!</span>
+<span class="code-highlight">"mat"</span>    → 0.21  ████████
+<span class="code-highlight">"tired"</span>  → 0.08  ███
+<span class="code-highlight">"because"</span>→ 0.04  █
+others     → ~0.01 each
+      </div>
+    </div>
+    <div class="dd-right">
+      <h4 style="color:#e2e8f0;margin-bottom:6px;">Multi-Head Attention</h4>
+      <p class="body-text" style="margin-bottom:6px;">
+        Instead of one attention pass, the model runs <strong>multiple attention heads in parallel</strong>. Each head learns to attend to different types of relationships:
+      </p>
+      <table class="param-table" style="margin-bottom:8px;">
+        <tr><td>Head 1</td><td style="font-family:Inter,sans-serif;">Syntactic: subject-verb agreement</td></tr>
+        <tr><td>Head 2</td><td style="font-family:Inter,sans-serif;">Coreference: pronouns → antecedents</td></tr>
+        <tr><td>Head 3</td><td style="font-family:Inter,sans-serif;">Semantic: related concepts</td></tr>
+        <tr><td>Head 4</td><td style="font-family:Inter,sans-serif;">Positional: nearby words</td></tr>
+        <tr><td>Head N</td><td style="font-family:Inter,sans-serif;">... and many more subtle patterns</td></tr>
+      </table>
+
+      <h4 style="color:#e2e8f0;margin-bottom:6px;">Why Attention Changed Everything</h4>
+      <div class="compare-row">
+        <div class="compare-card">
+          <h4 style="color:#f87171;">Before (RNN/LSTM)</h4>
+          <ul>
+            <li>Sequential — one word at a time</li>
+            <li>Can't parallelize</li>
+            <li>Struggles with long-range context</li>
+            <li>"Vanishing gradient" problem</li>
+            <li>Max effective context: ~50-100 words</li>
+          </ul>
+        </div>
+        <div class="compare-card">
+          <h4 style="color:#34d399;">After (Attention)</h4>
+          <ul>
+            <li>Every word ↔ every word simultaneously</li>
+            <li>Fully parallelizable</li>
+            <li>Captures any-distance relationships</li>
+            <li>Stable training even with 1000s of tokens</li>
+            <li>Context: 128K+ tokens</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="implication-box"><h4>💡 Key Insight</h4><p>Attention is the fundamental innovation that makes modern LLMs possible. It's how a model knows that "it" refers to "the cat" seven words earlier — and it scales to finding relevant information across a 200-page document.</p></div>
+    </div>
+  </div>
+  <div class="slide-footer"><span>AI Knowledge Library · github.com/kantan-sys/ai-knowledge-lib</span><span class="tag">4 / 8</span></div>
+</div>
+
+<!-- ===== SLIDE 5: TRANSFORMER ARCHITECTURE ===== -->
+<div class="slide" data-index="5">
+  <div class="dd-header">
+    <div><div class="slide-label">Part 4 · The Architecture</div><h2>Transformers</h2></div>
+    <div class="slide-meta">The engine that powers every modern LLM</div>
+  </div>
+  <div class="dd-content">
+    <div class="dd-left">
+      <p class="body-text" style="margin-bottom:10px;">
+        The <strong style="color:#a5b4fc;">Transformer</strong> is the neural network architecture introduced in the 2017 paper "Attention Is All You Need." GPT models use a <strong>decoder-only</strong> variant. The same basic architecture scales from GPT-2 (1.5B params) to GPT-4 (estimated 1.7T params).
+      </p>
+
+      <div class="diagram-box">
+        <h4>GPT Decoder Block (one of N repeated layers)</h4>
+        <div class="code-block" style="margin:0;">
+<span class="code-comment">    ┌─────────────────────────────────┐</span>
+<span class="code-comment">    │     INPUT: Token Embeddings     │</span>
+<span class="code-comment">    │  + Positional Encoding          │</span>
+<span class="code-comment">    └───────────┬─────────────────────┘</span>
+<span class="code-comment">                ↓</span>
+<span class="code-comment">    ┌─────────────────────────────────┐</span>
+<span class="code-highlight">    │   Masked Multi-Head Attention   │  ← "Look at previous words, not future ones"</span>
+<span class="code-comment">    └───────────┬─────────────────────┘</span>
+<span class="code-comment">                ↓ (Add & LayerNorm)</span>
+<span class="code-comment">    ┌─────────────────────────────────┐</span>
+<span class="code-highlight">    │   Feed-Forward Network (FFN)    │  ← Two linear layers with activation</span>
+<span class="code-comment">    └───────────┬─────────────────────┘</span>
+<span class="code-comment">                ↓ (Add & LayerNorm)</span>
+<span class="code-comment">    ┌─────────────────────────────────┐</span>
+<span class="code-comment">    │  OUTPUT → Next Decoder Block    │</span>
+<span class="code-comment">    └─────────────────────────────────┘</span>
+<span class="code-comment">       ↑ Repeated N times ↑</span>
+        </div>
+      </div>
+
+      <div class="stat-grid" style="margin-top:8px;">
+        <div class="stat-card"><div class="stat-value accent">96</div><div class="stat-label">GPT-3 decoder layers (175B params). GPT-4: estimated 120 layers, 1.7T params</div></div>
+        <div class="stat-card"><div class="stat-value accent">96</div><div class="stat-label">Attention heads per layer in GPT-3 (96 heads × 96 layers = 9,216 total heads)</div></div>
+        <div class="stat-card"><div class="stat-value amber">Masked</div><div class="stat-label">Causal masking ensures the model can't "cheat" by looking at future words during training</div></div>
+        <div class="stat-card"><div class="stat-value amber">~60%</div><div class="stat-label">FFN layers account for ~⅔ of total parameters (where most "knowledge" is stored)</div></div>
+      </div>
+    </div>
+    <div class="dd-right">
+      <h4 style="color:#e2e8f0;margin-bottom:6px;">Key Components Explained</h4>
+      <ul class="key-points">
+        <li><strong>Positional Encoding.</strong> Attention has no sense of order. Positional encodings inject position information so "dog bites man" ≠ "man bites dog"</li>
+        <li><strong>Masked Self-Attention.</strong> During training, each token can only attend to itself and previous tokens — this is what makes it "autoregressive"</li>
+        <li><strong>Feed-Forward Network (FFN).</strong> A two-layer fully-connected network applied to each token independently after attention. This is where much of the model's factual knowledge is stored</li>
+        <li><strong>Residual Connections (Add).</strong> The input to each sub-layer is added back to its output. This prevents the "vanishing gradient" problem and allows training very deep networks</li>
+        <li><strong>Layer Normalization.</strong> Stabilizes training by normalizing activations across the feature dimension</li>
+      </ul>
+
+      <h4 style="color:#e2e8f0;margin-bottom:6px;margin-top:8px;">Transformer Variants</h4>
+      <table class="param-table">
+        <tr><th>Architecture</th><th>Used By</th><th>Key Difference</th></tr>
+        <tr><td>Decoder-only</td><td>GPT family</td><td style="font-family:Inter,sans-serif;">Autoregressive — generates left-to-right</td></tr>
+        <tr><td>Encoder-only</td><td>BERT</td><td style="font-family:Inter,sans-serif;">Bidirectional — good for understanding, not generation</td></tr>
+        <tr><td>Encoder-Decoder</td><td>T5, BART</td><td style="font-family:Inter,sans-serif;">Used for translation, summarization</td></tr>
+      </table>
+
+      <div class="implication-box"><h4>💡 Key Insight</h4><p>The Transformer is elegantly simple: attention + feed-forward + residual connections, repeated many times. Its genius is that it's highly parallelizable (all tokens processed simultaneously during training) and scales remarkably well — just add more layers, wider dimensions, and more data.</p></div>
+    </div>
+  </div>
+  <div class="slide-footer"><span>AI Knowledge Library · github.com/kantan-sys/ai-knowledge-lib</span><span class="tag">5 / 8</span></div>
+</div>
+
+<!-- ===== SLIDE 6: TRAINING ===== -->
+<div class="slide" data-index="6">
+  <div class="dd-header">
+    <div><div class="slide-label">Part 5</div><h2>Training</h2></div>
+    <div class="slide-meta">How models learn from internet-scale text</div>
+  </div>
+  <div class="dd-content">
+    <div class="dd-left">
+      <p class="body-text" style="margin-bottom:10px;">
+        LLMs learn through a multi-stage process. The core is <strong style="color:#a5b4fc;">next-token prediction</strong> on trillions of tokens — a surprisingly simple objective that produces remarkably capable models.
+      </p>
+
+      <h4 style="color:#e2e8f0;margin-bottom:6px;">Stage 1: Pre-training (The Foundation)</h4>
+      <div class="diagram-box" style="margin-bottom:8px;">
+        <p class="body-text" style="margin-bottom:4px;">
+          <strong>Task:</strong> Given "The quick brown", predict "fox"<br>
+          <strong>Data:</strong> Internet-scale text (Common Crawl, Wikipedia, books, code, Reddit)<br>
+          <strong>Objective:</strong> Minimize prediction error across every position
+        </p>
+        <div class="code-block" style="margin:0;">
+<span class="code-comment">// The model sees:          It predicts:</span>
+<span class="code-token">The</span>  → predict next token → "quick"  (was the model right?)
+<span class="code-token">The quick</span> → predict next → "brown"  (was the model right?)
+<span class="code-token">The quick brown</span> → next → "fox"    (was the model right?)
+<span class="code-comment">// ... across billions of examples, the model learns patterns of language</span>
+        </div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-card"><div class="stat-value accent">15T+</div><div class="stat-label">Training tokens for Llama 3 (405B). GPT-4 estimated at 13T+ tokens</div></div>
+        <div class="stat-card"><div class="stat-value accent">$100M+</div><div class="stat-label">Estimated cost to train GPT-4. Frontier models now exceed $1B</div></div>
+        <div class="stat-card"><div class="stat-value amber">3-6 mo</div><div class="stat-label">Typical pre-training duration on 10,000-100,000 GPUs</div></div>
+        <div class="stat-card"><div class="stat-value amber">~4×</div><div class="stat-label">Compute scaling: each new generation uses ~4× more compute</div></div>
+      </div>
+    </div>
+    <div class="dd-right">
+      <h4 style="color:#e2e8f0;margin-bottom:6px;">Stage 2: Fine-tuning (Making It Useful)</h4>
+      <p class="body-text" style="margin-bottom:6px;">
+        Raw pre-trained models just complete text. Fine-tuning teaches them to be helpful assistants.
+      </p>
+
+      <div class="flow-row" style="margin-bottom:8px;">
+        <div class="flow-step"><div class="step-name">Base Model</div><div class="step-desc">Text completion<br>only</div></div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step"><div class="step-name">SFT</div><div class="step-desc">Supervised<br>Fine-Tuning</div></div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step"><div class="step-name">RLHF</div><div class="step-desc">Reinforcement<br>Learning from<br>Human Feedback</div></div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step"><div class="step-name">Chat Model</div><div class="step-desc">Helpful, safe<br>assistant</div></div>
+      </div>
+
+      <h4 style="color:#e2e8f0;margin-bottom:6px;">How RLHF Works</h4>
+      <ul class="key-points">
+        <li><strong>1. Collect preferences.</strong> Humans rank multiple model responses to the same prompt (A is better than B)</li>
+        <li><strong>2. Train a reward model.</strong> A separate model learns to predict human preferences — acting as an automated "judge"</li>
+        <li><strong>3. Fine-tune with RL.</strong> The LLM is fine-tuned to maximize the reward model's score, using PPO (Proximal Policy Optimization)</li>
+        <li><strong>4. The result.</strong> Models that are more helpful, refuse harmful requests, and follow instructions — but also more "aligned" to the trainers' values</li>
+      </ul>
+
+      <h4 style="color:#e2e8f0;margin-bottom:6px;margin-top:8px;">Scaling Laws</h4>
+      <table class="param-table" style="margin-bottom:8px;">
+        <tr><td>GPT-2 (2019)</td><td>1.5B params</td><td style="font-family:Inter,sans-serif;">Trained on 40GB text</td></tr>
+        <tr><td>GPT-3 (2020)</td><td>175B params</td><td style="font-family:Inter,sans-serif;">Trained on 570GB text</td></tr>
+        <tr><td>Llama 3 (2024)</td><td>405B params</td><td style="font-family:Inter,sans-serif;">Trained on 15T+ tokens</td></tr>
+        <tr><td>GPT-4 (2023)</td><td>~1.7T (MoE)</td><td style="font-family:Inter,sans-serif;">8×220B experts</td></tr>
+      </table>
+
+      <div class="implication-box"><h4>💡 Key Insight</h4><p>Pre-training (next-token prediction) gives the model knowledge and language ability. Fine-tuning (SFT + RLHF) makes it useful, safe, and aligned. The trend: more data, more compute, better models — but at exponentially increasing cost.</p></div>
+    </div>
+  </div>
+  <div class="slide-footer"><span>AI Knowledge Library · github.com/kantan-sys/ai-knowledge-lib</span><span class="tag">6 / 8</span></div>
+</div>
+
+<!-- ===== SLIDE 7: INFERENCE & HALLUCINATION ===== -->
+<div class="slide" data-index="7">
+  <div class="dd-header">
+    <div><div class="slide-label">Part 6 & 7</div><h2>Inference & Hallucination</h2></div>
+    <div class="slide-meta">How models generate — and why they make things up</div>
+  </div>
+  <div class="dd-content">
+    <div class="dd-left">
+      <h4 style="color:#e2e8f0;margin-bottom:6px;">Autoregressive Generation (One Token at a Time)</h4>
+      <p class="body-text" style="margin-bottom:8px;">
+        LLMs generate text <strong>one token at a time</strong>, each step feeding the output back as input for the next prediction. This is why generation feels sequential — it fundamentally is.
+      </p>
+      <div class="diagram-box">
+        <div class="code-block" style="margin:0;">
+<span class="code-comment">Prompt: "The meaning of life is"</span>
+<span class="code-highlight">Step 1:</span> "The meaning of life is" → predict → <span class="code-token">"to"</span>    (prob: 0.42)
+<span class="code-highlight">Step 2:</span> "The meaning of life is to" → predict → <span class="code-token">"be"</span>    (prob: 0.67)
+<span class="code-highlight">Step 3:</span> "The meaning of life is to be" → predict → <span class="code-token">"happy"</span> (prob: 0.31)
+<span class="code-comment">// ... continues until the model generates an end-of-sequence token</span>
+        </div>
+      </div>
+
+      <h4 style="color:#e2e8f0;margin-bottom:6px;margin-top:8px;">Controlling Generation: Temperature & Sampling</h4>
+      <p class="body-text" style="margin-bottom:4px;">The model outputs a probability distribution over its entire vocabulary (100K+ tokens). How we sample from it matters:</p>
+      <div class="stat-grid" style="margin-bottom:8px;">
+        <div class="stat-card"><div class="stat-value accent">Temp</div><div class="stat-label">Temperature controls randomness. 0 = always pick highest prob (deterministic). 1 = sample proportionally. >1 = more random/creative.</div></div>
+        <div class="stat-card"><div class="stat-value accent">Top-p</div><div class="stat-label">Nucleus sampling. Only consider tokens whose cumulative probability reaches p. T=0.7, top-p=0.9 is a common setting.</div></div>
+        <div class="stat-card"><div class="stat-value amber">Top-k</div><div class="stat-label">Only sample from the k most likely tokens. Simple but effective. Combined with temperature and top-p in practice.</div></div>
+        <div class="stat-card"><div class="stat-value amber">0→1M</div><div class="stat-label">Context window growth: GPT-2 (1K) → GPT-3 (2K) → GPT-4 (128K) → Gemini (1M+). Longer context = more relevant information.</div></div>
+      </div>
+    </div>
+    <div class="dd-right">
+      <h4 style="color:#e2e8f0;margin-bottom:6px;">Why LLMs Hallucinate</h4>
+      <p class="body-text" style="margin-bottom:6px;">
+        Hallucination isn't a bug — it's an inevitable consequence of how these models work. They're trained to <strong>predict plausible next tokens</strong>, not to be factually accurate.
+      </p>
+
+      <ul class="key-points" style="margin-bottom:8px;">
+        <li><strong>Next-token prediction ≠ truth.</strong> The model's only objective is to produce statistically probable text. It has no internal "fact checker."</li>
+        <li><strong>Training data is imperfect.</strong> The internet contains falsehoods, contradictions, and outdated information. The model learns from all of it.</li>
+        <li><strong>Probabilistic generation.</strong> Even with low temperature, the model picks tokens that <em>sound</em> right based on patterns — not because they're verified facts</li>
+        <li><strong>Knowledge cutoffs.</strong> Models have a training cutoff date. They don't know what happened after that — but they'll confidently guess</li>
+      </ul>
+
+      <h4 style="color:#e2e8f0;margin-bottom:6px;">Mitigations</h4>
+      <div class="compare-row">
+        <div class="compare-card">
+          <h4>RAG (Retrieval-Augmented Generation)</h4>
+          <ul>
+            <li>Look up facts in a trusted source before answering</li>
+            <li>Grounds the model in real data</li>
+            <li>Most practical enterprise solution</li>
+          </ul>
+        </div>
+        <div class="compare-card">
+          <h4>Other Approaches</h4>
+          <ul>
+            <li>Chain-of-thought prompting (reason step by step)</li>
+            <li>Constitutional AI (self-critique)</li>
+            <li>Tool use / function calling (delegate to reliable systems)</li>
+            <li>Human-in-the-loop for critical decisions</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="implication-box"><h4>💡 Key Insight</h4><p>LLMs are pattern completion engines, not knowledge bases. They excel at tasks where "sounding right" and "being right" overlap (summarization, coding, creative writing). For factual tasks, ground them with RAG, tools, or human verification.</p></div>
+    </div>
+  </div>
+  <div class="slide-footer"><span>AI Knowledge Library · github.com/kantan-sys/ai-knowledge-lib</span><span class="tag">7 / 8</span></div>
+</div>
+
+<!-- ===== SLIDE 8: GLOSSARY ===== -->
+<div class="slide" data-index="8">
+  <div class="dd-header">
+    <div><div class="slide-label">Reference</div><h2>Key Terms & Glossary</h2></div>
+    <div class="slide-meta">Quick reference for LLM fundamentals</div>
+  </div>
+
+  <div class="glossary-grid">
+    <div class="glossary-card">
+      <h4>Token</h4><p>A subword unit of text. "Hello world" ≈ 2-3 tokens. Models process text one token at a time.</p>
+    </div>
+    <div class="glossary-card">
+      <h4>BPE</h4><p>Byte-Pair Encoding. The most common tokenisation algorithm. Iteratively merges frequent character pairs.</p>
+    </div>
+    <div class="glossary-card">
+      <h4>Embedding</h4><p>A dense vector (list of numbers) representing the meaning of a token. Similar words are close in embedding space.</p>
+    </div>
+    <div class="glossary-card">
+      <h4>Attention</h4><p>The mechanism that lets each token weigh the importance of every other token. The core innovation behind transformers.</p>
+    </div>
+    <div class="glossary-card">
+      <h4>Query / Key / Value</h4><p>The three matrices in attention. Query="what am I looking for", Key="what do I contain", Value="my actual info".</p>
+    </div>
+    <div class="glossary-card">
+      <h4>Multi-Head Attention</h4><p>Running multiple attention operations in parallel. Each head learns to attend to different types of relationships.</p>
+    </div>
+    <div class="glossary-card">
+      <h4>Transformer</h4><p>The neural network architecture (2017) based entirely on attention. Powers GPT, Claude, Gemini, and Llama.</p>
+    </div>
+    <div class="glossary-card">
+      <h4>Decoder-only</h4><p>Transformer variant used by GPT. Generates text autoregressively (left-to-right). Simpler than encoder-decoder models.</p>
+    </div>
+    <div class="glossary-card">
+      <h4>FFN</h4><p>Feed-Forward Network. The dense layers after attention in each transformer block. Stores much of the model's knowledge.</p>
+    </div>
+    <div class="glossary-card">
+      <h4>Positional Encoding</h4><p>Injects position information into token embeddings. Without it, "dog bites man" = "man bites dog".</p>
+    </div>
+    <div class="glossary-card">
+      <h4>Pre-training</h4><p>The initial training phase on massive text corpora. The model learns language patterns via next-token prediction.</p>
+    </div>
+    <div class="glossary-card">
+      <h4>Fine-tuning</h4><p>Additional training on curated data to make the model helpful, safe, and aligned with human preferences.</p>
+    </div>
+    <div class="glossary-card">
+      <h4>RLHF</h4><p>Reinforcement Learning from Human Feedback. Humans rank outputs → train a reward model → fine-tune the LLM to maximize the reward.</p>
+    </div>
+    <div class="glossary-card">
+      <h4>Hallucination</h4><p>When an LLM generates plausible-sounding but factually incorrect information. An inherent challenge of next-token prediction.</p>
+    </div>
+    <div class="glossary-card">
+      <h4>RAG</h4><p>Retrieval-Augmented Generation. Looking up facts from an external source before generating a response. Reduces hallucination.</p>
+    </div>
+    <div class="glossary-card">
+      <h4>Context Window</h4><p>The maximum number of tokens a model can process at once. GPT-4: 128K. Gemini: 1M+. Determines how much info you can provide.</p>
+    </div>
+    <div class="glossary-card">
+      <h4>Temperature</h4><p>Controls randomness in generation. 0 = deterministic (always same output). 1 = proportional to probabilities. Higher = more creative.</p>
+    </div>
+    <div class="glossary-card">
+      <h4>Next-Token Prediction</h4><p>The core training objective. Given preceding text, predict the most likely next token. Simple task, profound results.</p>
+    </div>
+    <div class="glossary-card">
+      <h4>Cosine Similarity</h4><p>Measures the angle between two embedding vectors. cos(king,queen) = high. cos(king,banana) = low. Range: [-1, 1].</p>
+    </div>
+    <div class="glossary-card">
+      <h4>Scaling Laws</h4><p>Empirical observation that model performance improves predictably with more parameters, data, and compute. "Bigger = better" (to a point).</p>
+    </div>
+    <div class="glossary-card">
+      <h4>Softmax</h4><p>Converts raw scores into a probability distribution (sums to 1). Used to turn attention scores into weights and logits into token probabilities.</p>
+    </div>
+    <div class="glossary-card">
+      <h4>Parameter</h4><p>A learnable weight in the neural network. GPT-3: 175 billion. GPT-4: ~1.7 trillion. More params = more capacity (and cost).</p>
+    </div>
+    <div class="glossary-card">
+      <h4>MoE</h4><p>Mixture of Experts. An architecture where only a subset of parameters activate per token. GPT-4 uses this — 1.7T total, ~220B active per token.</p>
+    </div>
+    <div class="glossary-card">
+      <h4>Causal Masking</h4><p>Prevents the model from seeing future tokens during training. Ensures autoregressive generation — each token only sees the past.</p>
+    </div>
+  </div>
+
+  <div class="slide-footer"><span>AI Knowledge Library · github.com/kantan-sys/ai-knowledge-lib</span><span class="tag">8 / 8</span></div>
+</div>
+
+</div></div>
+
+<!-- ===== NAVIGATION ===== -->
+<div class="nav-bar">
+  <button class="nav-btn" id="prevBtn" onclick="navigate(-1)" disabled>←</button>
+  <span class="slide-counter" id="counter">1 / 8</span>
+  <button class="nav-btn" id="nextBtn" onclick="navigate(1)">→</button>
+</div>
+
+<script>
+  let currentSlide = 1;
+  const totalSlides = 8;
+
+  function navigate(dir) {
+    const next = currentSlide + dir;
+    if (next < 1 || next > totalSlides) return;
+    document.querySelector(`.slide[data-index="${currentSlide}"]`).classList.remove('active');
+    document.querySelector(`.slide[data-index="${next}"]`).classList.add('active');
+    currentSlide = next;
+    updateNav();
+  }
+
+  function updateNav() {
+    document.getElementById('counter').textContent = `${currentSlide} / ${totalSlides}`;
+    document.getElementById('prevBtn').disabled = currentSlide === 1;
+    document.getElementById('nextBtn').disabled = currentSlide === totalSlides;
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+      e.preventDefault(); navigate(1);
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault(); navigate(-1);
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      document.querySelector(`.slide[data-index="${currentSlide}"]`).classList.remove('active');
+      currentSlide = 1;
+      document.querySelector('.slide[data-index="1"]').classList.add('active');
+      updateNav();
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      document.querySelector(`.slide[data-index="${currentSlide}"]`).classList.remove('active');
+      currentSlide = totalSlides;
+      document.querySelector(`.slide[data-index="${totalSlides}"]`).classList.add('active');
+      updateNav();
+    }
+  });
+</script>
+
+</body>
+</html>
