@@ -3,346 +3,783 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI: The 5-Layered Cake</title>
+<title>AI: The 5-Layered Cake — Complete Deck</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    background: #0a0e17;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    padding: 20px;
+    background: #060912;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    min-height: 100vh; padding: 20px;
+    user-select: none;
+  }
+
+  /* ===== SLIDE CONTAINER ===== */
+  .deck {
+    position: relative;
+    width: 1280px; height: 720px;
+  }
+
+  .slides {
+    position: relative;
+    width: 100%; height: 100%;
   }
 
   .slide {
-    width: 1280px;
-    height: 720px;
-    background: linear-gradient(145deg, #0d1321 0%, #1a1f2e 100%);
+    position: absolute; inset: 0;
+    background: linear-gradient(155deg, #0d1321 0%, #141b2d 40%, #1a1f2e 100%);
     border-radius: 12px;
-    padding: 56px 72px;
-    position: relative;
+    padding: 60px 80px;
     overflow: hidden;
-    box-shadow: 0 25px 80px rgba(0,0,0,0.5);
     border: 1px solid rgba(255,255,255,0.06);
+    box-shadow: 0 25px 80px rgba(0,0,0,0.5);
+    display: none;
+    flex-direction: column;
   }
+  .slide.active { display: flex; }
 
-  /* Background decorative elements */
   .slide::before {
-    content: '';
-    position: absolute;
-    top: -120px;
-    right: -120px;
-    width: 500px;
-    height: 500px;
-    background: radial-gradient(circle, rgba(249,115,22,0.06) 0%, transparent 70%);
+    content: ''; position: absolute;
+    top: -150px; right: -150px;
+    width: 550px; height: 550px;
+    background: radial-gradient(circle, rgba(99,102,241,0.05) 0%, transparent 70%);
     border-radius: 50%;
   }
-  .slide::after {
-    content: '';
-    position: absolute;
-    bottom: -100px;
-    left: -80px;
-    width: 400px;
-    height: 400px;
-    background: radial-gradient(circle, rgba(99,102,241,0.06) 0%, transparent 70%);
-    border-radius: 50%;
-  }
-
   .slide > * { position: relative; z-index: 1; }
 
-  /* Header */
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 28px;
+  /* ===== NAVIGATION ===== */
+  .nav-bar {
+    display: flex; align-items: center; justify-content: center;
+    gap: 24px; margin-top: 18px;
   }
-  .header-left .label {
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: #f97316;
-    margin-bottom: 4px;
+  .nav-btn {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.04);
+    color: #94a3b8;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center;
   }
-  .header-left h1 {
-    font-size: 38px;
-    font-weight: 800;
-    color: #f1f5f9;
-    letter-spacing: -0.5px;
+  .nav-btn:hover {
+    background: rgba(99,102,241,0.2);
+    border-color: rgba(99,102,241,0.4);
+    color: #e2e8f0;
   }
-  .header-left h1 span {
+  .nav-btn:disabled { opacity: 0.3; cursor: default; }
+  .slide-counter {
+    color: #64748b; font-size: 14px; font-weight: 500;
+    min-width: 60px; text-align: center;
+  }
+
+  /* ===== TYPOGRAPHY ===== */
+  .slide-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 3px;
+    text-transform: uppercase; margin-bottom: 6px;
+  }
+  .slide-label.energy { color: #f97316; }
+  .slide-label.chips { color: #10b981; }
+  .slide-label.cloud { color: #06b6d4; }
+  .slide-label.models { color: #3b82f6; }
+  .slide-label.apps { color: #8b5cf6; }
+  .slide-label.takeaways { color: #f59e0b; }
+
+  h1 { font-size: 40px; font-weight: 800; color: #f1f5f9; letter-spacing: -0.5px; }
+  h1 span.gradient {
     background: linear-gradient(135deg, #f97316, #fb923c);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     background-clip: text;
   }
-  .header-right {
-    text-align: right;
-    font-size: 13px;
-    color: #64748b;
+  h1 span.gradient-models {
+    background: linear-gradient(135deg, #3b82f6, #818cf8);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  h2 { font-size: 28px; font-weight: 700; color: #f1f5f9; margin-bottom: 20px; }
+  h3 { font-size: 20px; font-weight: 700; color: #f1f5f9; margin-bottom: 8px; }
+  h4 { font-size: 15px; font-weight: 700; color: #e2e8f0; margin-bottom: 4px; }
+
+  .subtitle { font-size: 16px; color: #94a3b8; line-height: 1.6; max-width: 800px; }
+  .body-text { font-size: 14px; color: #cbd5e1; line-height: 1.65; }
+  .small-text { font-size: 12px; color: #64748b; line-height: 1.5; }
+
+  .slide-meta {
+    text-align: right; font-size: 13px; color: #475569;
   }
 
-  /* Subtitle */
-  .subtitle {
-    font-size: 16px;
-    color: #94a3b8;
-    line-height: 1.6;
-    margin-bottom: 36px;
-    max-width: 780px;
+  /* ===== SLIDE 1 — TITLE / OVERVIEW ===== */
+  .cake-overview {
+    display: flex; flex-direction: column-reverse; gap: 0; width: 100%;
+    border-radius: 8px; overflow: hidden;
+    box-shadow: 0 4px 30px rgba(0,0,0,0.3); margin-top: 36px;
   }
-
-  /* The 5-Layer Cake */
-  .cake {
-    display: flex;
-    flex-direction: column-reverse;
-    gap: 0;
-    width: 100%;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 4px 30px rgba(0,0,0,0.3);
-  }
-
-  .layer {
-    display: flex;
-    align-items: center;
-    padding: 20px 28px;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  .cake-layer {
+    display: flex; align-items: center; padding: 16px 28px;
+    transition: transform 0.2s ease;
     cursor: default;
-    position: relative;
   }
-  .layer:hover {
-    transform: translateX(8px);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-    z-index: 2;
+  .cake-layer:hover { transform: translateX(6px); }
+  .cake-num {
+    width: 44px; height: 44px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 800; margin-right: 22px; flex-shrink: 0;
   }
+  .cake-layer h3 { font-size: 16px; margin-bottom: 1px; }
+  .cake-layer p { font-size: 12px; opacity: 0.85; }
+  .cake-tags { margin-left: auto; display: flex; gap: 8px; }
+  .cake-tags span { padding: 3px 10px; border-radius: 16px; font-size: 10px; font-weight: 600; }
 
-  .layer-number {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    font-weight: 800;
-    margin-right: 24px;
-    flex-shrink: 0;
-  }
+  .cl-apps { background: linear-gradient(135deg, #4c1d95 0%, #7c3aed 100%); color: #ede9fe; border-top-left-radius: 8px; border-top-right-radius: 8px; }
+  .cl-apps .cake-num { background: rgba(255,255,255,0.14); color: #ddd6fe; }
+  .cl-apps h3 { color: #f5f3ff; }
+  .cl-apps p { color: #ddd6fe; }
+  .cl-apps .cake-tags span { background: rgba(255,255,255,0.11); color: #ddd6fe; }
 
-  .layer-content h3 {
-    font-size: 18px;
-    font-weight: 700;
-    margin-bottom: 2px;
-  }
-  .layer-content p {
-    font-size: 13px;
-    line-height: 1.5;
-    opacity: 0.85;
-  }
+  .cl-models { background: linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%); color: #dbeafe; }
+  .cl-models .cake-num { background: rgba(255,255,255,0.14); color: #bfdbfe; }
+  .cl-models h3 { color: #eff6ff; }
+  .cl-models p { color: #bfdbfe; }
+  .cl-models .cake-tags span { background: rgba(255,255,255,0.11); color: #bfdbfe; }
 
-  .layer-icons {
-    margin-left: auto;
-    display: flex;
-    gap: 10px;
-    font-weight: 600;
-    flex-shrink: 0;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-  }
-  .layer-icons span {
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-size: 11px;
-  }
+  .cl-cloud { background: linear-gradient(135deg, #0891b2 0%, #06b6d4 100%); color: #cffafe; }
+  .cl-cloud .cake-num { background: rgba(255,255,255,0.14); color: #a5f3fc; }
+  .cl-cloud h3 { color: #ecfeff; }
+  .cl-cloud p { color: #a5f3fc; }
+  .cl-cloud .cake-tags span { background: rgba(255,255,255,0.11); color: #a5f3fc; }
 
-  /* Layer 5 - Applications (top) */
-  .layer-5 {
-    background: linear-gradient(135deg, #4c1d95 0%, #7c3aed 100%);
-    color: #ede9fe;
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
-  }
-  .layer-5 .layer-number { background: rgba(255,255,255,0.15); color: #ddd6fe; }
-  .layer-5 .layer-content h3 { color: #f5f3ff; }
-  .layer-5 .layer-content p { color: #ddd6fe; }
-  .layer-5 .layer-icons span { background: rgba(255,255,255,0.12); color: #ddd6fe; }
+  .cl-chips { background: linear-gradient(135deg, #059669 0%, #10b981 100%); color: #d1fae5; }
+  .cl-chips .cake-num { background: rgba(255,255,255,0.14); color: #a7f3d0; }
+  .cl-chips h3 { color: #ecfdf5; }
+  .cl-chips p { color: #a7f3d0; }
+  .cl-chips .cake-tags span { background: rgba(255,255,255,0.11); color: #a7f3d0; }
 
-  /* Layer 4 - AI Models */
-  .layer-4 {
-    background: linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%);
-    color: #dbeafe;
-  }
-  .layer-4 .layer-number { background: rgba(255,255,255,0.15); color: #bfdbfe; }
-  .layer-4 .layer-content h3 { color: #eff6ff; }
-  .layer-4 .layer-content p { color: #bfdbfe; }
-  .layer-4 .layer-icons span { background: rgba(255,255,255,0.12); color: #bfdbfe; }
+  .cl-energy { background: linear-gradient(135deg, #b45309 0%, #f97316 100%); color: #fff7ed; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; }
+  .cl-energy .cake-num { background: rgba(255,255,255,0.14); color: #fed7aa; }
+  .cl-energy h3 { color: #fff7ed; }
+  .cl-energy p { color: #fed7aa; }
+  .cl-energy .cake-tags span { background: rgba(255,255,255,0.11); color: #fed7aa; }
 
-  /* Layer 3 - Cloud & Data Center */
-  .layer-3 {
-    background: linear-gradient(135deg, #0891b2 0%, #06b6d4 100%);
-    color: #cffafe;
-  }
-  .layer-3 .layer-number { background: rgba(255,255,255,0.15); color: #a5f3fc; }
-  .layer-3 .layer-content h3 { color: #ecfeff; }
-  .layer-3 .layer-content p { color: #a5f3fc; }
-  .layer-3 .layer-icons span { background: rgba(255,255,255,0.12); color: #a5f3fc; }
+  /* ===== DEEP DIVE SLIDES (2-6) ===== */
+  .deep-dive-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 32px; }
+  .deep-dive-content { display: flex; gap: 40px; flex: 1; }
+  .deep-dive-left { flex: 1; }
+  .deep-dive-right { flex: 1; }
 
-  /* Layer 2 - Chips & Computing */
-  .layer-2 {
-    background: linear-gradient(135deg, #059669 0%, #10b981 100%);
-    color: #d1fae5;
+  /* Stat cards */
+  .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .stat-card {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 10px; padding: 20px;
   }
-  .layer-2 .layer-number { background: rgba(255,255,255,0.15); color: #a7f3d0; }
-  .layer-2 .layer-content h3 { color: #ecfdf5; }
-  .layer-2 .layer-content p { color: #a7f3d0; }
-  .layer-2 .layer-icons span { background: rgba(255,255,255,0.12); color: #a7f3d0; }
+  .stat-value {
+    font-size: 28px; font-weight: 800; margin-bottom: 4px;
+  }
+  .stat-value.amber { color: #fbbf24; }
+  .stat-value.green { color: #34d399; }
+  .stat-value.blue { color: #60a5fa; }
+  .stat-value.cyan { color: #22d3ee; }
+  .stat-value.purple { color: #a78bfa; }
+  .stat-label { font-size: 12px; color: #94a3b8; line-height: 1.4; }
 
-  /* Layer 1 - Energy (bottom / foundation) */
-  .layer-1 {
-    background: linear-gradient(135deg, #b45309 0%, #f97316 100%);
-    color: #fff7ed;
-    border-bottom-left-radius: 8px;
-    border-bottom-right-radius: 8px;
+  /* Key points list */
+  .key-points { list-style: none; }
+  .key-points li {
+    padding: 8px 0; padding-left: 24px;
+    position: relative; font-size: 14px; color: #cbd5e1;
+    line-height: 1.6;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
   }
-  .layer-1 .layer-number { background: rgba(255,255,255,0.15); color: #fed7aa; }
-  .layer-1 .layer-content h3 { color: #fff7ed; }
-  .layer-1 .layer-content p { color: #fed7aa; }
-  .layer-1 .layer-icons span { background: rgba(255,255,255,0.12); color: #fed7aa; }
+  .key-points li::before {
+    content: ''; position: absolute; left: 0; top: 14px;
+    width: 8px; height: 8px; border-radius: 50%;
+  }
+  .key-points.energy-bullets li::before { background: #f97316; }
+  .key-points.chips-bullets li::before { background: #10b981; }
+  .key-points.cloud-bullets li::before { background: #06b6d4; }
+  .key-points.models-bullets li::before { background: #3b82f6; }
+  .key-points.apps-bullets li::before { background: #8b5cf6; }
+
+  /* Player card */
+  .player-card {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 16px;
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px; margin-bottom: 8px;
+  }
+  .player-logo {
+    width: 36px; height: 36px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 800; color: #fff; flex-shrink: 0;
+  }
+  .player-info h4 { font-size: 14px; margin-bottom: 0; }
+  .player-info p { font-size: 11px; color: #94a3b8; }
+
+  /* Implications box */
+  .implication-box {
+    margin-top: 16px;
+    padding: 16px 20px;
+    background: rgba(249,115,22,0.06); border: 1px solid rgba(249,115,22,0.2);
+    border-radius: 10px;
+  }
+  .implication-box h4 { color: #fb923c; font-size: 13px; margin-bottom: 4px; }
+  .implication-box p { font-size: 13px; color: #fdba74; line-height: 1.5; }
+
+  .implication-box.chips-imply { background: rgba(16,185,129,0.06); border-color: rgba(16,185,129,0.2); }
+  .implication-box.chips-imply h4 { color: #34d399; }
+  .implication-box.chips-imply p { color: #6ee7b7; }
+
+  .implication-box.cloud-imply { background: rgba(6,182,212,0.06); border-color: rgba(6,182,212,0.2); }
+  .implication-box.cloud-imply h4 { color: #22d3ee; }
+  .implication-box.cloud-imply p { color: #67e8f9; }
+
+  .implication-box.models-imply { background: rgba(59,130,246,0.06); border-color: rgba(59,130,246,0.2); }
+  .implication-box.models-imply h4 { color: #60a5fa; }
+  .implication-box.models-imply p { color: #93c5fd; }
+
+  .implication-box.apps-imply { background: rgba(139,92,246,0.06); border-color: rgba(139,92,246,0.2); }
+  .implication-box.apps-imply h4 { color: #a78bfa; }
+  .implication-box.apps-imply p { color: #c4b5fd; }
+
+  /* Stack diagram mini */
+  .mini-stack {
+    display: flex; flex-direction: column-reverse; gap: 0;
+    border-radius: 6px; overflow: hidden;
+    margin-top: 8px; box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+  }
+  .mini-stack .ms-layer {
+    padding: 8px 14px; font-size: 10px; font-weight: 600;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .ms-layer.highlight {
+    box-shadow: 0 0 0 2px rgba(255,255,255,0.2);
+    z-index: 1; position: relative;
+  }
+  .ms-apps { background: #7c3aed; color: #ede9fe; }
+  .ms-models { background: #3b82f6; color: #dbeafe; }
+  .ms-cloud { background: #06b6d4; color: #cffafe; }
+  .ms-chips { background: #10b981; color: #d1fae5; }
+  .ms-energy { background: #f97316; color: #fff7ed; }
+  .ms-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.5); }
+
+  /* ===== SLIDE 7 — TAKEAWAYS ===== */
+  .takeaway-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 28px; }
+  .takeaway-card {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px; padding: 24px;
+  }
+  .takeaway-card h3 { font-size: 16px; }
+  .takeaway-card p { font-size: 13px; color: #94a3b8; line-height: 1.6; }
+  .takeaway-card .ta-icon {
+    width: 40px; height: 40px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; margin-bottom: 14px;
+  }
+  .ta-energy .ta-icon { background: rgba(249,115,22,0.15); }
+  .ta-chips .ta-icon { background: rgba(16,185,129,0.15); }
+  .ta-cloud .ta-icon { background: rgba(6,182,212,0.15); }
+  .ta-models .ta-icon { background: rgba(59,130,246,0.15); }
+  .ta-apps .ta-icon { background: rgba(139,92,246,0.15); }
+  .ta-all .ta-icon { background: rgba(245,158,11,0.15); }
 
   /* Footer */
-  .footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 30px;
-    font-size: 12px;
-    color: #475569;
+  .slide-footer {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: auto; font-size: 12px; color: #475569;
+    padding-top: 20px;
   }
-  .footer .tag {
-    background: rgba(249,115,22,0.12);
-    color: #fb923c;
-    padding: 4px 12px;
-    border-radius: 4px;
+  .slide-footer .tag {
+    background: rgba(255,255,255,0.05); color: #64748b;
+    padding: 4px 12px; border-radius: 4px;
   }
 
-  /* Print / presentation mode */
+  /* Print */
   @media print {
-    body { background: #0a0e17; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    .slide { box-shadow: none; break-inside: avoid; }
+    body { background: #060912; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .slide { box-shadow: none; break-inside: avoid; position: relative !important; display: flex !important; margin-bottom: 40px; }
+    .nav-bar { display: none; }
+    .deck { width: auto; height: auto; }
   }
 </style>
 </head>
 <body>
 
-<div class="slide">
+<div class="deck">
+<div class="slides">
 
-  <div class="header">
-    <div class="header-left">
-      <div class="label">The Stack</div>
-      <h1>The <span>5-Layered Cake</span> of AI</h1>
+<!-- ============ SLIDE 1: TITLE / OVERVIEW ============ -->
+<div class="slide active" data-index="1">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;">
+    <div>
+      <div class="slide-label energy">The Stack</div>
+      <h1>The <span class="gradient">5-Layered Cake</span> of AI</h1>
     </div>
-    <div class="header-right">
-      AI Knowledge Library<br>
-      artefacts/ai-5-layered-cake
-    </div>
+    <div class="slide-meta">AI Knowledge Library<br>artefacts/ai-5-layered-cake</div>
   </div>
 
   <p class="subtitle">
-    AI is not a single technology — it is a <strong>stack</strong> of interdependent layers,
+    AI is not a single technology — it is a <strong style="color:#e2e8f0;">stack</strong> of interdependent layers,
     each enabling the one above it. From the raw power that fuels it to the applications
     that create real-world value, every layer is essential.
   </p>
 
-  <div class="cake">
-
-    <!-- Layer 5: Applications (Top) -->
-    <div class="layer layer-5">
-      <div class="layer-number">5</div>
-      <div class="layer-content">
-        <h3>Applications</h3>
-        <p>Where consumer and enterprise value is realised — drug discovery, legal copilots, robotics, financial services, and beyond</p>
-      </div>
-      <div class="layer-icons">
-        <span>Drug Discovery</span>
-        <span>Legal Copilot</span>
-        <span>Robotics</span>
-        <span>Financial Services</span>
-      </div>
+  <div class="cake-overview">
+    <div class="cake-layer cl-apps">
+      <div class="cake-num">5</div>
+      <div><h3>Applications</h3><p>Where consumer & enterprise value is realised — drug discovery, legal copilots, robotics, financial services</p></div>
+      <div class="cake-tags"><span>Drug Discovery</span><span>Legal Copilot</span><span>Robotics</span><span>Finance</span></div>
     </div>
-
-    <!-- Layer 4: AI Models -->
-    <div class="layer layer-4">
-      <div class="layer-number">4</div>
-      <div class="layer-content">
-        <h3>AI Models</h3>
-        <p>Foundational machine learning algorithms and Large Language Models (LLMs) that process data, text, and images</p>
-      </div>
-      <div class="layer-icons">
-        <span>LLMs</span>
-        <span>GPT-4</span>
-        <span>Claude</span>
-        <span>Computer Vision</span>
-      </div>
+    <div class="cake-layer cl-models">
+      <div class="cake-num">4</div>
+      <div><h3>AI Models</h3><p>Foundation models, LLMs, ML algorithms — processing data, text, and images</p></div>
+      <div class="cake-tags"><span>GPT-4</span><span>Claude</span><span>Gemini</span><span>Llama</span></div>
     </div>
-
-    <!-- Layer 3: Cloud & Data Center Infrastructure -->
-    <div class="layer layer-3">
-      <div class="layer-number">3</div>
-      <div class="layer-content">
-        <h3>Cloud & Data Center Infrastructure</h3>
-        <p>Server farms, optical interconnects, and networking fabrics that connect thousands of chips into massive AI data centers</p>
-      </div>
-      <div class="layer-icons">
-        <span>Server Farms</span>
-        <span>Optical Interconnects</span>
-        <span>Networking Fabrics</span>
-      </div>
+    <div class="cake-layer cl-cloud">
+      <div class="cake-num">3</div>
+      <div><h3>Cloud & Data Center Infrastructure</h3><p>Server farms, optical interconnects, networking fabrics connecting thousands of chips</p></div>
+      <div class="cake-tags"><span>AWS</span><span>Azure</span><span>GCP</span><span>Optical Nets</span></div>
     </div>
-
-    <!-- Layer 2: Chips & Computing Infrastructure -->
-    <div class="layer layer-2">
-      <div class="layer-number">2</div>
-      <div class="layer-content">
-        <h3>Chips & Computing Infrastructure</h3>
-        <p>The hardware layer that powers AI — GPUs, CPUs, and specialized semiconductors that perform the computation</p>
-      </div>
-      <div class="layer-icons">
-        <span>NVIDIA GPUs</span>
-        <span>CPUs</span>
-        <span>AI Accelerators</span>
-        <span>Specialized Silicon</span>
-      </div>
+    <div class="cake-layer cl-chips">
+      <div class="cake-num">2</div>
+      <div><h3>Chips & Computing Infrastructure</h3><p>GPUs, CPUs, and specialized semiconductors — the hardware that powers AI</p></div>
+      <div class="cake-tags"><span>NVIDIA</span><span>GPUs</span><span>TPUs</span><span>AI Silicon</span></div>
     </div>
-
-    <!-- Layer 1: Energy (Bottom / Foundation) -->
-    <div class="layer layer-1">
-      <div class="layer-number">1</div>
-      <div class="layer-content">
-        <h3>Energy &mdash; The Foundation</h3>
-        <p>Generating, processing, and training intelligence in real time requires massive amounts of power</p>
-      </div>
-      <div class="layer-icons">
-        <span>Power Generation</span>
-        <span>Grid Infrastructure</span>
-        <span>Cooling</span>
-        <span>Sustainability</span>
-      </div>
+    <div class="cake-layer cl-energy">
+      <div class="cake-num">1</div>
+      <div><h3>Energy — The Foundation</h3><p>Generating, processing, and training intelligence in real time requires massive amounts of power</p></div>
+      <div class="cake-tags"><span>Power Gen</span><span>Grid</span><span>Cooling</span><span>Sustainability</span></div>
     </div>
-
   </div>
 
-  <div class="footer">
-    <span>AI Knowledge Library &mdash; github.com/kantan-sys/ai-knowledge-lib</span>
-    <span class="tag">ARTEFACT</span>
+  <div class="slide-footer">
+    <span>AI Knowledge Library · github.com/kantan-sys/ai-knowledge-lib</span>
+    <span class="tag">SLIDE 1 / 7</span>
   </div>
-
 </div>
+
+<!-- ============ SLIDE 2: ENERGY DEEP DIVE ============ -->
+<div class="slide" data-index="2">
+  <div class="deep-dive-header">
+    <div>
+      <div class="slide-label energy">Layer 1 · The Foundation</div>
+      <h2>Energy</h2>
+    </div>
+    <div class="mini-stack" style="width:200px;flex-shrink:0;">
+      <div class="ms-layer ms-apps"><span class="ms-dot"></span>Applications</div>
+      <div class="ms-layer ms-models"><span class="ms-dot"></span>AI Models</div>
+      <div class="ms-layer ms-cloud"><span class="ms-dot"></span>Cloud & Data Centers</div>
+      <div class="ms-layer ms-chips"><span class="ms-dot"></span>Chips & Computing</div>
+      <div class="ms-layer ms-energy highlight"><span class="ms-dot"></span>Energy</div>
+    </div>
+  </div>
+
+  <div class="deep-dive-content">
+    <div class="deep-dive-left">
+      <p class="body-text" style="margin-bottom:20px;">
+        AI is fundamentally <strong style="color:#fb923c;">energy-hungry</strong>. Training a single large model can consume as much electricity
+        as hundreds of homes use in a year. Inference at scale multiplies this demand. Energy is
+        the binding constraint on AI's growth trajectory.
+      </p>
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-value amber">~1,300 MWh</div>
+          <div class="stat-label">Energy to train GPT-4 — equivalent to ~120 US homes' annual consumption</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value amber">10×</div>
+          <div class="stat-label">Inference energy can exceed training energy over a model's deployed lifetime</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value amber">~4%</div>
+          <div class="stat-label">Projected share of global electricity demand from data centers by 2030 (IEA)</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value amber">1 GW+</div>
+          <div class="stat-label">Power capacity planned for individual frontier AI data centers</div>
+        </div>
+      </div>
+    </div>
+    <div class="deep-dive-right">
+      <h4 style="color:#e2e8f0;margin-bottom:12px;">Key Dynamics</h4>
+      <ul class="key-points energy-bullets">
+        <li><strong>Power is the bottleneck.</strong> Grid interconnection delays in the US can exceed 5 years for new data center projects</li>
+        <li><strong>Location matters.</strong> AI data centers cluster near cheap, reliable power — hydro in the PNW, nuclear in Virginia, renewables in Texas</li>
+        <li><strong>Cooling innovation.</strong> Liquid cooling and immersion cooling are becoming standard as chip densities rise beyond 1 kW per rack</li>
+        <li><strong>Nuclear revival.</strong> Microsoft (Three Mile Island), Amazon (Talen), and Google (Kairos) are signing nuclear power deals for AI</li>
+        <li><strong>Carbon impact.</strong> AI's carbon footprint is under increasing scrutiny — driving demand for 24/7 carbon-free energy matching</li>
+        <li><strong>Sustainability vs. speed.</strong> Tension between net-zero commitments and the race to deploy AI capacity</li>
+      </ul>
+      <div class="implication-box">
+        <h4>⚡ Implications for Companies</h4>
+        <p>Energy constraints will shape AI strategy. Companies must factor power availability into data center location decisions, monitor the carbon intensity of their AI workloads, and prepare for rising energy costs as a material AI operating expense.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-footer">
+    <span>AI Knowledge Library · github.com/kantan-sys/ai-knowledge-lib</span>
+    <span class="tag">SLIDE 2 / 7</span>
+  </div>
+</div>
+
+<!-- ============ SLIDE 3: CHIPS DEEP DIVE ============ -->
+<div class="slide" data-index="3">
+  <div class="deep-dive-header">
+    <div>
+      <div class="slide-label chips">Layer 2 · Hardware</div>
+      <h2>Chips & Computing Infrastructure</h2>
+    </div>
+    <div class="mini-stack" style="width:200px;flex-shrink:0;">
+      <div class="ms-layer ms-apps"><span class="ms-dot"></span>Applications</div>
+      <div class="ms-layer ms-models"><span class="ms-dot"></span>AI Models</div>
+      <div class="ms-layer ms-cloud"><span class="ms-dot"></span>Cloud & Data Centers</div>
+      <div class="ms-layer ms-chips highlight"><span class="ms-dot"></span>Chips & Computing</div>
+      <div class="ms-layer ms-energy"><span class="ms-dot"></span>Energy</div>
+    </div>
+  </div>
+
+  <div class="deep-dive-content">
+    <div class="deep-dive-left">
+      <p class="body-text" style="margin-bottom:20px;">
+        The silicon layer is <strong style="color:#34d399;">the core economic engine</strong> of AI. NVIDIA's data center revenue
+        surpassed $47B in FY2024. GPU supply constraints have become a national strategic concern, and
+        export controls now shape global chip flows.
+      </p>
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-value green">$3.6T</div>
+          <div class="stat-label">NVIDIA market cap (2025), driven almost entirely by AI chip demand</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value green">80%+</div>
+          <div class="stat-label">NVIDIA's estimated share of the AI training GPU market</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value green">H100 / B200</div>
+          <div class="stat-label">NVIDIA's flagship AI GPUs. B200 delivers 2.5× training perf vs H100</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value green">$5-7B</div>
+          <div class="stat-label">Reported cost of a 100,000-GPU cluster for frontier model training</div>
+        </div>
+      </div>
+    </div>
+    <div class="deep-dive-right">
+      <h4 style="color:#e2e8f0;margin-bottom:12px;">The Competitive Landscape</h4>
+      <div class="player-card"><div class="player-logo" style="background:#10b981;">N</div><div class="player-info"><h4>NVIDIA</h4><p>H100, B200, Blackwell — the dominant AI GPU platform. Software moat via CUDA ecosystem.</p></div></div>
+      <div class="player-card"><div class="player-logo" style="background:#ef4444;">G</div><div class="player-info"><h4>Google (TPU)</h4><p>Custom ASIC chips (Trillium 6th gen). Cloud-only availability. Competitive perf/watt.</p></div></div>
+      <div class="player-card"><div class="player-logo" style="background:#3b82f6;">A</div><div class="player-info"><h4>Amazon (Trainium / Inferentia)</h4><p>Purpose-built for AWS. Trainium2 for training, Inferentia for cost-effective inference.</p></div></div>
+      <div class="player-card"><div class="player-logo" style="background:#8b5cf6;">M</div><div class="player-info"><h4>Microsoft (Maia)</h4><p>Custom AI accelerator for Azure. First-gen chip focused on inference workloads.</p></div></div>
+      <div class="player-card"><div class="player-logo" style="background:#f59e0b;">A</div><div class="player-info"><h4>AMD (MI300X)</h4><p>Competing GPU alternative. Strong inference performance. ROCm software ecosystem maturing.</p></div></div>
+
+      <div class="implication-box chips-imply">
+        <h4>💡 Implications for Companies</h4>
+        <p>GPU supply is concentrated but diversifying. Companies should avoid single-vendor lock-in, monitor the CUDA-alternative software ecosystem (ROCm, Triton, OpenXLA), and treat AI compute as a strategic procurement category.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-footer">
+    <span>AI Knowledge Library · github.com/kantan-sys/ai-knowledge-lib</span>
+    <span class="tag">SLIDE 3 / 7</span>
+  </div>
+</div>
+
+<!-- ============ SLIDE 4: CLOUD & DATA CENTERS ============ -->
+<div class="slide" data-index="4">
+  <div class="deep-dive-header">
+    <div>
+      <div class="slide-label cloud">Layer 3 · Infrastructure</div>
+      <h2>Cloud & Data Center Infrastructure</h2>
+    </div>
+    <div class="mini-stack" style="width:200px;flex-shrink:0;">
+      <div class="ms-layer ms-apps"><span class="ms-dot"></span>Applications</div>
+      <div class="ms-layer ms-models"><span class="ms-dot"></span>AI Models</div>
+      <div class="ms-layer ms-cloud highlight"><span class="ms-dot"></span>Cloud & Data Centers</div>
+      <div class="ms-layer ms-chips"><span class="ms-dot"></span>Chips & Computing</div>
+      <div class="ms-layer ms-energy"><span class="ms-dot"></span>Energy</div>
+    </div>
+  </div>
+
+  <div class="deep-dive-content">
+    <div class="deep-dive-left">
+      <p class="body-text" style="margin-bottom:20px;">
+        Cloud infrastructure is where <strong style="color:#22d3ee;">compute meets scale</strong>. AI data centers now house
+        100,000+ GPUs connected by high-speed optical interconnects. The hyperscalers are investing
+        hundreds of billions in AI infrastructure build-out.
+      </p>
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-value cyan">$250B+</div>
+          <div class="stat-label">Combined 2025 capex by Microsoft, Amazon, Google, and Meta — largely AI infrastructure</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value cyan">100K+ GPUs</div>
+          <div class="stat-label">Scale of a single frontier AI training cluster. Interconnect bandwidth is the limiting factor</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value cyan">800 Gbps</div>
+          <div class="stat-label">Per-port speed of latest optical interconnects (InfiniBand NDR / Ethernet 800G)</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value cyan">10:1</div>
+          <div class="stat-label">Ratio of inference to training compute at scale — inference dominates total infrastructure</div>
+        </div>
+      </div>
+    </div>
+    <div class="deep-dive-right">
+      <h4 style="color:#e2e8f0;margin-bottom:12px;">Hyperscaler Landscape</h4>
+      <div class="player-card"><div class="player-logo" style="background:#f97316;">AWS</div><div class="player-info"><h4>Amazon Web Services</h4><p>Market leader. Trainium2 + NVIDIA GPU instances. Bedrock for managed models. Dominant in enterprise.</p></div></div>
+      <div class="player-card"><div class="player-logo" style="background:#3b82f6;">Az</div><div class="player-info"><h4>Microsoft Azure</h4><p>Exclusive OpenAI infrastructure. Copilot integration across M365. Strong enterprise AI platform play.</p></div></div>
+      <div class="player-card"><div class="player-logo" style="background:#ef4444;">GCP</div><div class="player-info"><h4>Google Cloud</h4><p>TPU advantage. Gemini models. Vertex AI platform. Deep ML tooling heritage.</p></div></div>
+      <div class="player-card"><div class="player-logo" style="background:#8b5cf6;">Or</div><div class="player-info"><h4>Oracle Cloud (OCI)</h4><p>Emerging challenger. Large GPU clusters. Competitive pricing. Growing AI cloud presence.</p></div></div>
+
+      <div class="implication-box cloud-imply">
+        <h4>🔌 Implications for Companies</h4>
+        <p>Infrastructure decisions have long lock-in effects. Multi-cloud strategies mitigate concentration risk. Networking (not just GPU count) is the hidden constraint on cluster performance. Inference will dominate compute spend — plan for it.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-footer">
+    <span>AI Knowledge Library · github.com/kantan-sys/ai-knowledge-lib</span>
+    <span class="tag">SLIDE 4 / 7</span>
+  </div>
+</div>
+
+<!-- ============ SLIDE 5: AI MODELS ============ -->
+<div class="slide" data-index="5">
+  <div class="deep-dive-header">
+    <div>
+      <div class="slide-label models">Layer 4 · Intelligence</div>
+      <h2>AI Models</h2>
+    </div>
+    <div class="mini-stack" style="width:200px;flex-shrink:0;">
+      <div class="ms-layer ms-apps"><span class="ms-dot"></span>Applications</div>
+      <div class="ms-layer ms-models highlight"><span class="ms-dot"></span>AI Models</div>
+      <div class="ms-layer ms-cloud"><span class="ms-dot"></span>Cloud & Data Centers</div>
+      <div class="ms-layer ms-chips"><span class="ms-dot"></span>Chips & Computing</div>
+      <div class="ms-layer ms-energy"><span class="ms-dot"></span>Energy</div>
+    </div>
+  </div>
+
+  <div class="deep-dive-content">
+    <div class="deep-dive-left">
+      <p class="body-text" style="margin-bottom:20px;">
+        Foundation models are the <strong style="color:#60a5fa;">brains of the stack</strong>. The frontier is advancing
+        rapidly — with open-source models closing the gap on proprietary leaders. Model economics
+        are shifting as inference costs drop and small models get more capable.
+      </p>
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-value blue">GPT-4o</div>
+          <div class="stat-label">OpenAI's multimodal flagship. Omni-modal across text, vision, and audio</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value blue">Claude 4</div>
+          <div class="stat-label">Anthropic's frontier model. Emphasis on safety, long context (200K tokens), and reasoning</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value blue">Gemini 2.5</div>
+          <div class="stat-label">Google's most capable model. 1M+ token context window. Strong multimodal performance</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value blue">Llama 4</div>
+          <div class="stat-label">Meta's open-source family. Closing the gap with proprietary models at lower cost</div>
+        </div>
+      </div>
+    </div>
+    <div class="deep-dive-right">
+      <h4 style="color:#e2e8f0;margin-bottom:12px;">Key Model Dynamics</h4>
+      <ul class="key-points models-bullets">
+        <li><strong>Open vs. Closed.</strong> Llama, Mistral, Qwen, DeepSeek lead open-source. OpenAI, Anthropic, Google lead proprietary. Open models offer control & cost; closed models lead on capability & safety</li>
+        <li><strong>Small models rising.</strong> Models like Phi, Gemma, and Llama-8B deliver surprisingly strong results for enterprise tasks at a fraction of the cost</li>
+        <li><strong>Multimodal is standard.</strong> Vision, audio, and video understanding are now baseline expectations</li>
+        <li><strong>Agentic capabilities.</strong> Models are increasingly capable of tool use, planning, and multi-step reasoning — enabling autonomous AI agents</li>
+        <li><strong>Inference cost collapse.</strong> Prices for API inference have dropped 80-90% year-over-year, democratizing access</li>
+        <li><strong>Fine-tuning & RAG.</strong> Enterprise deployment patterns are solidifying: RAG for knowledge grounding, fine-tuning for specialized tasks</li>
+      </ul>
+      <div class="implication-box models-imply">
+        <h4>🧠 Implications for Companies</h4>
+        <p>Model selection is now a portfolio decision — not a single-vendor bet. Evaluate models on cost, latency, accuracy, and control. Prepare for multi-model architectures. The model layer is commoditizing; differentiation shifts to data, workflows, and applications.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-footer">
+    <span>AI Knowledge Library · github.com/kantan-sys/ai-knowledge-lib</span>
+    <span class="tag">SLIDE 5 / 7</span>
+  </div>
+</div>
+
+<!-- ============ SLIDE 6: APPLICATIONS ============ -->
+<div class="slide" data-index="6">
+  <div class="deep-dive-header">
+    <div>
+      <div class="slide-label apps">Layer 5 · Value</div>
+      <h2>Applications</h2>
+    </div>
+    <div class="mini-stack" style="width:200px;flex-shrink:0;">
+      <div class="ms-layer ms-apps highlight"><span class="ms-dot"></span>Applications</div>
+      <div class="ms-layer ms-models"><span class="ms-dot"></span>AI Models</div>
+      <div class="ms-layer ms-cloud"><span class="ms-dot"></span>Cloud & Data Centers</div>
+      <div class="ms-layer ms-chips"><span class="ms-dot"></span>Chips & Computing</div>
+      <div class="ms-layer ms-energy"><span class="ms-dot"></span>Energy</div>
+    </div>
+  </div>
+
+  <div class="deep-dive-content">
+    <div class="deep-dive-left">
+      <p class="body-text" style="margin-bottom:20px;">
+        Applications are <strong style="color:#a78bfa;">where value is captured</strong>. Every layer below is infrastructure cost
+        — the application layer is where revenue, productivity, and competitive advantage materialize.
+        Enterprise AI adoption is shifting from experimentation to deployment.
+      </p>
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-value purple">$15.7T</div>
+          <div class="stat-label">PwC estimate of AI's potential contribution to the global economy by 2030</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value purple">72%</div>
+          <div class="stat-label">Organizations that adopted AI in at least one business function (McKinsey 2024)</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value purple">40%</div>
+          <div class="stat-label">Average productivity gain reported by early enterprise AI adopters</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value purple">2025+</div>
+          <div class="stat-label">Year of AI agents — autonomous AI systems moving from pilot to production</div>
+        </div>
+      </div>
+    </div>
+    <div class="deep-dive-right">
+      <h4 style="color:#e2e8f0;margin-bottom:12px;">Use Cases by Industry</h4>
+      <ul class="key-points apps-bullets">
+        <li><strong>Drug Discovery.</strong> AI-designed drugs entering clinical trials. Protein folding (AlphaFold). Target identification at scale</li>
+        <li><strong>Legal Copilots.</strong> Contract analysis, e-discovery, legal research. 80%+ time reduction on document review</li>
+        <li><strong>Financial Services.</strong> Fraud detection, algorithmic trading, credit underwriting, regulatory compliance</li>
+        <li><strong>Software Engineering.</strong> Code generation (GitHub Copilot, Cursor). 30-50% developer productivity gains reported</li>
+        <li><strong>Customer Service.</strong> AI agents handling complex support queries. 24/7 availability. 60%+ deflection rates</li>
+        <li><strong>Manufacturing.</strong> Predictive maintenance, quality inspection (computer vision), supply chain optimization</li>
+      </ul>
+      <div class="implication-box apps-imply">
+        <h4>🚀 Implications for Companies</h4>
+        <p>The application layer is where competitive advantage lives. Start with high-ROI, low-risk use cases. Invest in change management — technology is only 30% of the equation. Build AI fluency across the organization. The winners won't be companies with the best models — they'll be companies that best embed AI into their workflows and products.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-footer">
+    <span>AI Knowledge Library · github.com/kantan-sys/ai-knowledge-lib</span>
+    <span class="tag">SLIDE 6 / 7</span>
+  </div>
+</div>
+
+<!-- ============ SLIDE 7: TAKEAWAYS ============ -->
+<div class="slide" data-index="7">
+  <div class="deep-dive-header">
+    <div>
+      <div class="slide-label takeaways">Summary</div>
+      <h2>Key Takeaways for Companies</h2>
+    </div>
+    <div class="slide-meta">Bringing it all together</div>
+  </div>
+
+  <div class="takeaway-grid">
+    <div class="takeaway-card ta-energy">
+      <div class="ta-icon">⚡</div>
+      <h3>Energy Is the Binding Constraint</h3>
+      <p>AI growth is ultimately limited by power availability. Monitor energy costs, carbon intensity, and location strategy. Power procurement is now an AI strategy decision.</p>
+    </div>
+    <div class="takeaway-card ta-chips">
+      <div class="ta-icon">💻</div>
+      <h3>Chip Supply Is Strategic</h3>
+      <p>GPU concentration creates risk. Diversify chip sources, track the CUDA-alternative ecosystem, and treat AI compute as a board-level procurement concern.</p>
+    </div>
+    <div class="takeaway-card ta-cloud">
+      <div class="ta-icon">☁️</div>
+      <h3>Infrastructure Decisions Compound</h3>
+      <p>Cloud choices create multi-year lock-in. Networking is as critical as GPU count. Inference will dominate compute spend — design for it from day one.</p>
+    </div>
+    <div class="takeaway-card ta-models">
+      <div class="ta-icon">🧠</div>
+      <h3>Models Are Commoditizing</h3>
+      <p>Model quality is converging. Competitive advantage shifts from which model you use to how you use it — data, workflows, and applications become the differentiator.</p>
+    </div>
+    <div class="takeaway-card ta-apps">
+      <div class="ta-icon">🚀</div>
+      <h3>Applications Capture the Value</h3>
+      <p>The application layer delivers ROI. Start with proven use cases, invest in change management, and build AI capability across the organization, not just in technical teams.</p>
+    </div>
+    <div class="takeaway-card ta-all">
+      <div class="ta-icon">🔗</div>
+      <h3>Every Layer Is Connected</h3>
+      <p>Decisions in one layer cascade through the stack. A weak foundation undermines everything above it. Take a full-stack view — energy to application — when building your AI strategy.</p>
+    </div>
+  </div>
+
+  <div class="slide-footer">
+    <span>AI Knowledge Library · github.com/kantan-sys/ai-knowledge-lib</span>
+    <span class="tag">SLIDE 7 / 7</span>
+  </div>
+</div>
+
+</div><!-- /slides -->
+</div><!-- /deck -->
+
+<!-- ===== NAVIGATION ===== -->
+<div class="nav-bar">
+  <button class="nav-btn" id="prevBtn" onclick="navigate(-1)" disabled>←</button>
+  <span class="slide-counter" id="counter">1 / 7</span>
+  <button class="nav-btn" id="nextBtn" onclick="navigate(1)">→</button>
+</div>
+
+<script>
+  let currentSlide = 1;
+  const totalSlides = 7;
+
+  function navigate(dir) {
+    const next = currentSlide + dir;
+    if (next < 1 || next > totalSlides) return;
+    document.querySelector(`.slide[data-index="${currentSlide}"]`).classList.remove('active');
+    document.querySelector(`.slide[data-index="${next}"]`).classList.add('active');
+    currentSlide = next;
+    updateNav();
+  }
+
+  function updateNav() {
+    document.getElementById('counter').textContent = `${currentSlide} / ${totalSlides}`;
+    document.getElementById('prevBtn').disabled = currentSlide === 1;
+    document.getElementById('nextBtn').disabled = currentSlide === totalSlides;
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+      e.preventDefault(); navigate(1);
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault(); navigate(-1);
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      document.querySelector(`.slide[data-index="${currentSlide}"]`).classList.remove('active');
+      currentSlide = 1;
+      document.querySelector(`.slide[data-index="1"]`).classList.add('active');
+      updateNav();
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      document.querySelector(`.slide[data-index="${currentSlide}"]`).classList.remove('active');
+      currentSlide = totalSlides;
+      document.querySelector(`.slide[data-index="${totalSlides}"]`).classList.add('active');
+      updateNav();
+    }
+  });
+</script>
 
 </body>
 </html>
