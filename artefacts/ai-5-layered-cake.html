@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI: The 5-Layered Cake — Australian Perspective</title>
+<title>AI: The 5-Layered Cake — Australian Perspective (Updated)</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
@@ -17,12 +17,7 @@
     display: flex; flex-direction: column;
   }
 
-  /* ===== DECK (fits viewport) ===== */
-  .deck {
-    flex: 1; position: relative; overflow: hidden;
-    min-height: 0;
-  }
-
+  .deck { flex: 1; position: relative; overflow: hidden; min-height: 0; }
   .slides { position: relative; width: 100%; height: 100%; }
 
   .slide {
@@ -30,65 +25,61 @@
     background: linear-gradient(155deg, #0d1321 0%, #141b2d 40%, #1a1f2e 100%);
     overflow-y: auto; overflow-x: hidden;
     display: none; flex-direction: column;
-    padding: clamp(24px, 4vh, 48px) clamp(20px, 5vw, 64px);
+    padding: clamp(22px, 3.5vh, 42px) clamp(18px, 4.5vw, 56px);
   }
   .slide.active { display: flex; }
 
   .slide::before {
     content: ''; position: absolute; pointer-events: none;
-    top: -10%; right: -10%;
-    width: 40vw; height: 40vw;
-    background: radial-gradient(circle, rgba(99,102,241,0.05) 0%, transparent 70%);
-    border-radius: 50%;
-    z-index: 0;
+    top: -10%; right: -8%;
+    width: 38vw; height: 38vw;
+    background: radial-gradient(circle, rgba(99,102,241,0.06) 0%, transparent 70%);
+    border-radius: 50%; z-index: 0;
   }
-
   .slide > * { position: relative; z-index: 1; flex-shrink: 0; }
 
-  /* ===== NAV ===== */
   .nav-bar {
     flex-shrink: 0; display: flex; align-items: center; justify-content: center;
-    gap: 20px; height: 54px; background: #060912;
+    gap: 20px; height: 50px; background: #060912;
     border-top: 1px solid rgba(255,255,255,0.05);
   }
   .nav-btn {
-    width: 36px; height: 36px; border-radius: 50%;
+    width: 34px; height: 34px; border-radius: 50%;
     border: 1px solid rgba(255,255,255,0.12);
     background: rgba(255,255,255,0.04);
-    color: #94a3b8; font-size: 16px; cursor: pointer;
+    color: #94a3b8; font-size: 15px; cursor: pointer;
     display: flex; align-items: center; justify-content: center;
     transition: all 0.2s;
   }
-  .nav-btn:hover {
-    background: rgba(99,102,241,0.2);
-    border-color: rgba(99,102,241,0.4); color: #e2e8f0;
-  }
+  .nav-btn:hover { background: rgba(99,102,241,0.2); border-color: rgba(99,102,241,0.4); color: #e2e8f0; }
   .nav-btn:disabled { opacity: 0.3; cursor: default; }
   .slide-counter { color: #64748b; font-size: 13px; font-weight: 500; min-width: 50px; text-align: center; }
 
-  /* ===== TYPOGRAPHY ===== */
   .slide-label {
-    font-size: clamp(9px, 1vw, 11px); font-weight: 700; letter-spacing: 2px;
+    font-size: clamp(9px, 0.9vw, 11px); font-weight: 700; letter-spacing: 2px;
     text-transform: uppercase; margin-bottom: 4px;
   }
   .slide-label.energy { color: #f97316; } .slide-label.chips { color: #10b981; }
   .slide-label.cloud { color: #06b6d4; } .slide-label.models { color: #3b82f6; }
   .slide-label.apps { color: #8b5cf6; } .slide-label.takeaways { color: #f59e0b; }
 
-  h1 { font-size: clamp(24px, 3vw, 38px); font-weight: 800; color: #f1f5f9; letter-spacing: -0.5px; }
+  h1 { font-size: clamp(22px, 2.8vw, 36px); font-weight: 800; color: #f1f5f9; letter-spacing: -0.5px; }
   h1 span.gradient {
     background: linear-gradient(135deg, #f97316, #fb923c);
     -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
   }
-  h2 { font-size: clamp(20px, 2.5vw, 28px); font-weight: 700; color: #f1f5f9; margin-bottom: 14px; }
-  h3 { font-size: clamp(14px, 1.6vw, 18px); font-weight: 700; color: #f1f5f9; margin-bottom: 4px; }
-  h4 { font-size: clamp(12px, 1.3vw, 15px); font-weight: 700; color: #e2e8f0; margin-bottom: 2px; }
+  h2 { font-size: clamp(18px, 2.2vw, 26px); font-weight: 700; color: #f1f5f9; margin-bottom: 12px; }
+  h3 { font-size: clamp(14px, 1.5vw, 17px); font-weight: 700; color: #e2e8f0; margin-bottom: 4px; }
+  h4 { font-size: clamp(12px, 1.2vw, 14px); font-weight: 700; color: #e2e8f0; margin-bottom: 2px; }
+  .subtitle { font-size: clamp(12px, 1.2vw, 14px); color: #94a3b8; line-height: 1.5; max-width: 700px; }
+  .body-text { font-size: clamp(11px, 1.05vw, 13px); color: #cbd5e1; line-height: 1.55; }
+  .slide-meta { text-align: right; font-size: clamp(10px, 0.85vw, 11px); color: #475569; }
+  .fresh-tag {
+    display: inline-block; background: rgba(16,185,129,0.15); color: #34d399;
+    font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 3px;
+    margin-left: 6px; vertical-align: middle;
+  }
 
-  .subtitle { font-size: clamp(12px, 1.3vw, 15px); color: #94a3b8; line-height: 1.5; max-width: 700px; }
-  .body-text { font-size: clamp(11px, 1.1vw, 13px); color: #cbd5e1; line-height: 1.55; }
-  .slide-meta { text-align: right; font-size: clamp(10px, 0.9vw, 12px); color: #475569; }
-
-  /* ===== SLIDE 1 — OVERVIEW ===== */
   .s1-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: clamp(12px, 2vh, 22px); }
   .cake-overview {
     display: flex; flex-direction: column-reverse; gap: 0; width: 100%;
@@ -136,13 +127,11 @@
   .cl-energy h3 { color:#fff7ed; } .cl-energy p { color:#fed7aa; }
   .cl-energy .cake-tags span { background:rgba(255,255,255,0.11); color:#fed7aa; }
 
-  /* ===== DEEP DIVE LAYOUT ===== */
-  .dd-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: clamp(12px, 2vh, 22px); flex-shrink: 0; }
-  .dd-content { display: flex; gap: clamp(16px, 3vw, 32px); flex: 1; min-height: 0; }
+  .dd-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: clamp(10px, 1.8vh, 18px); flex-shrink: 0; }
+  .dd-content { display: flex; gap: clamp(14px, 2.5vw, 28px); flex: 1; min-height: 0; }
   .dd-left { flex: 1; min-width: 0; }
   .dd-right { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 
-  /* Mini stack */
   .mini-stack {
     display: flex; flex-direction: column-reverse; gap: 0;
     border-radius: 5px; overflow: hidden; margin-top: 6px;
@@ -162,7 +151,6 @@
   .ms-energy { background:#f97316; color:#fff7ed; }
   .ms-dot { width:4px; height:4px; border-radius:50%; background:rgba(255,255,255,0.5); }
 
-  /* Stat grid */
   .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(6px, 1vh, 10px); }
   .stat-card {
     background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
@@ -174,16 +162,14 @@
   .stat-value.purple { color: #a78bfa; }
   .stat-label { font-size: clamp(9px, 0.85vw, 11px); color: #94a3b8; line-height: 1.35; }
 
-  /* Key points */
   .key-points { list-style: none; flex: 1; overflow-y: auto; }
   .key-points li {
-    padding: clamp(4px, 0.7vh, 6px) 0;
-    padding-left: 18px; position: relative;
-    font-size: clamp(10px, 1vw, 12px); color: #cbd5e1;
+    padding: clamp(4px, 0.65vh, 6px) 0; padding-left: 18px;
+    position: relative; font-size: clamp(10px, 0.95vw, 12px); color: #cbd5e1;
     line-height: 1.5; border-bottom: 1px solid rgba(255,255,255,0.04);
   }
   .key-points li::before {
-    content: ''; position: absolute; left: 0; top: clamp(8px, 1vh, 10px);
+    content: ''; position: absolute; left: 0; top: clamp(7px, 0.9vh, 9px);
     width: 6px; height: 6px; border-radius: 50%;
   }
   .key-points.energy-bullets li::before { background:#f97316; }
@@ -192,7 +178,6 @@
   .key-points.models-bullets li::before { background:#3b82f6; }
   .key-points.apps-bullets li::before { background:#8b5cf6; }
 
-  /* Player cards */
   .player-card {
     display: flex; align-items: center; gap: 10px;
     padding: clamp(6px, 1vh, 10px) 12px;
@@ -207,14 +192,13 @@
   .player-info h4 { font-size: clamp(11px, 1vw, 13px); margin-bottom: 0; }
   .player-info p { font-size: clamp(9px, 0.8vw, 10px); color: #94a3b8; line-height: 1.3; }
 
-  /* Implication box */
   .implication-box {
-    margin-top: auto; padding: clamp(8px, 1.2vh, 12px) 14px;
+    margin-top: auto; padding: clamp(7px, 1vh, 10px) 12px;
     border-radius: 8px; flex-shrink: 0;
     background: rgba(249,115,22,0.06); border: 1px solid rgba(249,115,22,0.2);
   }
-  .implication-box h4 { color:#fb923c; font-size: clamp(10px, 1vw, 12px); margin-bottom: 2px; }
-  .implication-box p { font-size: clamp(10px, 0.9vw, 11px); color:#fdba74; line-height: 1.45; }
+  .implication-box h4 { color:#fb923c; font-size: clamp(10px, 0.9vw, 11px); margin-bottom: 2px; }
+  .implication-box p { font-size: clamp(9px, 0.85vw, 10px); color:#fdba74; line-height: 1.45; }
   .implication-box.chips-imply { background:rgba(16,185,129,0.06); border-color:rgba(16,185,129,0.2); }
   .implication-box.chips-imply h4 { color:#34d399; } .implication-box.chips-imply p { color:#6ee7b7; }
   .implication-box.cloud-imply { background:rgba(6,182,212,0.06); border-color:rgba(6,182,212,0.2); }
@@ -224,7 +208,6 @@
   .implication-box.apps-imply { background:rgba(139,92,246,0.06); border-color:rgba(139,92,246,0.2); }
   .implication-box.apps-imply h4 { color:#a78bfa; } .implication-box.apps-imply p { color:#c4b5fd; }
 
-  /* Takeaways grid */
   .takeaway-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: clamp(10px, 1.5vh, 16px); margin-top: clamp(10px, 1.5vh, 16px); flex: 1; }
   .takeaway-card {
     background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
@@ -245,30 +228,40 @@
   .ta-apps .ta-icon { background:rgba(139,92,246,0.15); }
   .ta-all .ta-icon { background:rgba(245,158,11,0.15); }
 
-  /* Footer */
   .slide-footer {
     display: flex; justify-content: space-between; align-items: center;
-    margin-top: auto; padding-top: clamp(8px, 1.5vh, 14px); flex-shrink: 0;
-    font-size: clamp(10px, 0.8vw, 11px); color: #475569;
+    margin-top: auto; padding-top: clamp(6px, 1.2vh, 12px); flex-shrink: 0;
+    font-size: clamp(9px, 0.75vw, 10px); color: #475569;
   }
-  .slide-footer .tag { background:rgba(255,255,255,0.05); color:#64748b; padding:2px 10px; border-radius:4px; }
+  .slide-footer .tag { background:rgba(255,255,255,0.05); color:#64748b; padding:2px 8px; border-radius:4px; }
 
-  /* AU badge */
   .au-badge {
     display: inline-flex; align-items: center; gap: 4px;
-    background: rgba(0, 102, 51, 0.25); border: 1px solid rgba(0, 153, 76, 0.3);
+    background: rgba(0,102,51,0.25); border: 1px solid rgba(0,153,76,0.3);
     color: #4ade80; font-size: 10px; font-weight: 700;
     padding: 2px 8px; border-radius: 4px; margin-left: 8px;
     vertical-align: middle;
   }
-  .au-flag { font-size: 12px; }
 
   @media print {
     body { overflow: visible; background:#060912; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
-    .slide { position:relative !important; display:flex !important; margin-bottom:30px; height:auto !important; }
+    .slide { position:relative !important; display:flex !important; margin-bottom:25px; height:auto !important; }
     .nav-bar { display:none; }
     .deck { flex:none; height:auto !important; }
   }
+
+  .compare-row { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(8px, 1.2vh, 12px); margin: clamp(6px, 1vh, 10px) 0; }
+  .compare-card {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px; padding: clamp(10px, 1.5vh, 14px);
+  }
+  .compare-card h4 { font-size: clamp(11px, 1vw, 13px); margin-bottom: 6px; }
+  .compare-card ul { list-style: none; }
+  .compare-card ul li {
+    font-size: clamp(10px, 0.85vw, 11px); color: #94a3b8; line-height: 1.5;
+    padding: 2px 0; padding-left: 12px; position: relative;
+  }
+  .compare-card ul li::before { content: '•'; position: absolute; left: 0; color: #6366f1; }
 </style>
 </head>
 <body>
@@ -279,21 +272,20 @@
 <div class="slide active" data-index="1">
   <div class="s1-row">
     <div>
-      <div class="slide-label energy">The Stack</div>
-      <h1>The <span class="gradient">5-Layered Cake</span> of AI <span class="au-badge"><span class="au-flag">🇦🇺</span> AU</span></h1>
+      <div class="slide-label energy">The Stack <span class="fresh-tag">UPDATED JUN 2026</span></div>
+      <h1>The <span class="gradient">5-Layered Cake</span> of AI <span class="au-badge">🇦🇺 AU</span></h1>
     </div>
     <div class="slide-meta">AI Knowledge Library<br>artefacts/ai-5-layered-cake</div>
   </div>
   <p class="subtitle">
-    AI is not a single technology — it is a <strong style="color:#e2e8f0;">stack</strong> of interdependent layers. Each enables the one above.
-    This deck explores the full stack with an <strong style="color:#4ade80;">Australian lens</strong> — local energy, infrastructure, regulatory context, and industry use cases.
+    AI is not a single technology — it is a <strong style="color:#e2e8f0;">stack</strong> of interdependent layers. This deck explores the full stack with an <strong style="color:#4ade80;">Australian lens</strong> — local energy, infrastructure, regulatory context, and industry use cases. Updated with 2025-2026 data.
   </p>
   <div class="cake-overview">
-    <div class="cake-layer cl-apps"><div class="cake-num">5</div><div><h3>Applications</h3><p>Where value is realised — mining autonomy, agtech, fintech, GovTech, healthcare</p></div><div class="cake-tags"><span>Mining</span><span>Agtech</span><span>Fintech</span><span>GovTech</span></div></div>
-    <div class="cake-layer cl-models"><div class="cake-num">4</div><div><h3>AI Models</h3><p>Foundation models & LLMs — global frontier plus sovereign AI initiatives</p></div><div class="cake-tags"><span>GPT-4</span><span>Claude</span><span>Llama</span><span>CSIRO</span></div></div>
-    <div class="cake-layer cl-cloud"><div class="cake-num">3</div><div><h3>Cloud & Data Centers</h3><p>AWS Sydney/Melbourne, Azure Australia, Google Sydney, NEXTDC, sovereign cloud</p></div><div class="cake-tags"><span>AWS AP-SE</span><span>Azure AU</span><span>NEXTDC</span><span>Sovereign</span></div></div>
-    <div class="cake-layer cl-chips"><div class="cake-num">2</div><div><h3>Chips & Computing</h3><p>Semiconductor supply chain, AUKUS implications, quantum computing research</p></div><div class="cake-tags"><span>Geopolitics</span><span>AUKUS</span><span>Quantum</span><span>Supply Chain</span></div></div>
-    <div class="cake-layer cl-energy"><div class="cake-num">1</div><div><h3>Energy — The Foundation</h3><p>Australia's NEM grid, renewables boom, Snowy 2.0, data center power demands</p></div><div class="cake-tags"><span>NEM</span><span>Renewables</span><span>Snowy 2.0</span><span>AEMO</span></div></div>
+    <div class="cake-layer cl-apps"><div class="cake-num">5</div><div><h3>Applications</h3><p>Where value is realised — mining AI, agtech, fintech, GovTech, health, robotics</p></div><div class="cake-tags"><span>Mining</span><span>Agtech</span><span>Fintech</span><span>GovTech</span></div></div>
+    <div class="cake-layer cl-models"><div class="cake-num">4</div><div><h3>AI Models</h3><p>GPT-4o, Claude 4, Gemini 2.5, Llama 4, DeepSeek R1 — open vs closed battle</p></div><div class="cake-tags"><span>GPT-4o</span><span>Claude 4</span><span>DeepSeek</span><span>CSIRO</span></div></div>
+    <div class="cake-layer cl-cloud"><div class="cake-num">3</div><div><h3>Cloud & Data Centers</h3><p>AWS/Azure/GCP AU regions, NEXTDC, AirTrunk, sovereign cloud, data sovereignty</p></div><div class="cake-tags"><span>AWS</span><span>Azure AU</span><span>NEXTDC</span><span>Sovereign</span></div></div>
+    <div class="cake-layer cl-chips"><div class="cake-num">2</div><div><h3>Chips & Computing</h3><p>NVIDIA $5T market cap (Oct 2025), China export wars, AUKUS, quantum computing</p></div><div class="cake-tags"><span>$5T NVIDIA</span><span>DeepSeek</span><span>AUKUS</span><span>Quantum</span></div></div>
+    <div class="cake-layer cl-energy"><div class="cake-num">1</div><div><h3>Energy — The Foundation</h3><p>Australia's NEM, renewables boom, Snowy 2.0, data center power race</p></div><div class="cake-tags"><span>NEM</span><span>Renewables</span><span>Snowy 2.0</span><span>AEMO</span></div></div>
   </div>
   <div class="slide-footer"><span>AI Knowledge Library · github.com/kantan-sys/ai-knowledge-lib</span><span class="tag">1 / 7</span></div>
 </div>
@@ -301,30 +293,30 @@
 <!-- ===== SLIDE 2: ENERGY ===== -->
 <div class="slide" data-index="2">
   <div class="dd-header">
-    <div><div class="slide-label energy">Layer 1 · The Foundation</div><h2>Energy <span class="au-badge"><span class="au-flag">🇦🇺</span> AU</span></h2></div>
+    <div><div class="slide-label energy">Layer 1 · The Foundation</div><h2>Energy <span class="au-badge">🇦🇺 AU</span></h2></div>
     <div class="mini-stack"><div class="ms-layer ms-apps"><span class="ms-dot"></span>Applications</div><div class="ms-layer ms-models"><span class="ms-dot"></span>AI Models</div><div class="ms-layer ms-cloud"><span class="ms-dot"></span>Cloud & Data Centers</div><div class="ms-layer ms-chips"><span class="ms-dot"></span>Chips & Computing</div><div class="ms-layer ms-energy highlight"><span class="ms-dot"></span>Energy</div></div>
   </div>
   <div class="dd-content">
     <div class="dd-left">
-      <p class="body-text" style="margin-bottom:10px;">AI is <strong style="color:#fb923c;">energy-hungry</strong>. Training a single large model can consume as much electricity as hundreds of homes use in a year. Australia faces unique challenges — and opportunities — at the intersection of AI growth and energy infrastructure.</p>
+      <p class="body-text" style="margin-bottom:10px;">AI is <strong style="color:#fb923c;">energy-hungry</strong>. Training frontier models now consumes electricity on par with small cities. Inference at scale multiplies this demand. The race for clean, reliable power has become the binding constraint on AI's growth — and Australia has both unique challenges and a renewable energy advantage.</p>
       <div class="stat-grid">
-        <div class="stat-card"><div class="stat-value amber">~1,300 MWh</div><div class="stat-label">Energy to train GPT-4 — equivalent to ~120 homes' annual consumption</div></div>
-        <div class="stat-card"><div class="stat-value amber">10×</div><div class="stat-label">Inference energy can exceed training energy over a model's deployed lifetime</div></div>
-        <div class="stat-card"><div class="stat-value amber">~5%</div><div class="stat-label">Data center electricity demand as share of Australia's NEM by 2030 (AEMO projection)</div></div>
-        <div class="stat-card"><div class="stat-value amber">Snowy 2.0</div><div class="stat-label">2.2 GW pumped hydro — critical for firming renewables to power AI data centers</div></div>
+        <div class="stat-card"><div class="stat-value amber">~6%+</div><div class="stat-label">Projected data centre share of Australia's NEM electricity demand by 2035 (AEMO Integrated System Plan)</div></div>
+        <div class="stat-card"><div class="stat-value amber">1 GW+</div><div class="stat-label">Power capacity planned for individual frontier AI data centres — equivalent to a large coal plant</div></div>
+        <div class="stat-card"><div class="stat-value amber">Snowy 2.0</div><div class="stat-label">2.2 GW pumped hydro — critical for firming variable renewables to support 24/7 AI infrastructure loads</div></div>
+        <div class="stat-card"><div class="stat-value amber">82%</div><div class="stat-label">Australia's renewable electricity target by 2030 — positions the country as a green AI infra destination</div></div>
       </div>
     </div>
     <div class="dd-right">
       <h4 style="color:#e2e8f0;margin-bottom:8px;">Australia's Energy Landscape for AI</h4>
       <ul class="key-points energy-bullets">
-        <li><strong>AEMO & NEM.</strong> The National Electricity Market serves eastern/southern states. Grid connection delays of 2-5 years are a bottleneck for new data centers</li>
-        <li><strong>Renewable abundance.</strong> Australia has among the world's best solar & wind resources — a competitive advantage for green AI infrastructure</li>
-        <li><strong>Data center boom.</strong> Sydney and Melbourne are seeing record data center investment (NEXTDC, AirTrunk, Equinix, CDC)</li>
-        <li><strong>Hydro & storage.</strong> Snowy 2.0 and battery storage (Hornsdale, Victoria Big Battery) are critical for 24/7 carbon-free matching</li>
-        <li><strong>Transmission constraints.</strong> New interconnectors (EnergyConnect, Marinus Link) needed to move renewables to data center load centers</li>
-        <li><strong>Carbon policy.</strong> Safeguard Mechanism reforms put emissions caps on large facilities — data centers will be captured</li>
+        <li><strong>AEMO & NEM.</strong> The National Electricity Market serves eastern/southern states. Grid connection delays of 2–5 years are the primary bottleneck for new data centres</li>
+        <li><strong>Renewable advantage.</strong> Australia has among the world's best solar and wind resources — a structural cost advantage for 24/7 carbon-free AI infrastructure</li>
+        <li><strong>Data centre investment boom.</strong> Sydney and Melbourne seeing record DC investment (NEXTDC, AirTrunk/Macquarie, Equinix, CDC, AWS, Microsoft)</li>
+        <li><strong>Storage & firming.</strong> Snowy 2.0, Waratah Super Battery, and Victoria Big Battery are critical for matching intermittent renewables to 24/7 AI loads</li>
+        <li><strong>Transmission build-out.</strong> EnergyConnect (SA-NSW), HumeLink, and Marinus Link are essential to move renewable power to data centre load centres</li>
+        <li><strong>Safeguard Mechanism.</strong> Australia's emissions cap on large industrial facilities increasingly captures data centres — carbon compliance is now a design constraint</li>
       </ul>
-      <div class="implication-box"><h4>⚡ Implications for Australian Business</h4><p>Energy costs and availability are now a strategic AI decision. Companies must consider data center power contracts, NEM price exposure, and the carbon intensity of AI workloads. Australia's renewable advantage is a potential draw for sovereign and green AI infrastructure.</p></div>
+      <div class="implication-box"><h4>⚡ Implications for Australian Business</h4><p>Energy availability and carbon intensity are now strategic AI decisions. Data centre location must account for NEM connection timelines and price exposure. Australia's renewable advantage can attract sovereign and green AI infrastructure — if transmission keeps pace with demand.</p></div>
     </div>
   </div>
   <div class="slide-footer"><span>AI Knowledge Library · github.com/kantan-sys/ai-knowledge-lib</span><span class="tag">2 / 7</span></div>
@@ -333,26 +325,33 @@
 <!-- ===== SLIDE 3: CHIPS ===== -->
 <div class="slide" data-index="3">
   <div class="dd-header">
-    <div><div class="slide-label chips">Layer 2 · Hardware</div><h2>Chips & Computing <span class="au-badge"><span class="au-flag">🇦🇺</span> AU</span></h2></div>
+    <div><div class="slide-label chips">Layer 2 · Hardware</div><h2>Chips & Computing <span class="au-badge">🇦🇺 AU</span></h2></div>
     <div class="mini-stack"><div class="ms-layer ms-apps"><span class="ms-dot"></span>Applications</div><div class="ms-layer ms-models"><span class="ms-dot"></span>AI Models</div><div class="ms-layer ms-cloud"><span class="ms-dot"></span>Cloud & Data Centers</div><div class="ms-layer ms-chips highlight"><span class="ms-dot"></span>Chips & Computing</div><div class="ms-layer ms-energy"><span class="ms-dot"></span>Energy</div></div>
   </div>
   <div class="dd-content">
     <div class="dd-left">
-      <p class="body-text" style="margin-bottom:10px;">Silicon is the <strong style="color:#34d399;">economic engine of AI</strong>. NVIDIA dominates with 80%+ share. Australia has minimal chip fabrication — but the geopolitical dimension (AUKUS, export controls) and quantum computing research are strategically significant.</p>
+      <p class="body-text" style="margin-bottom:10px;">Silicon is the <strong style="color:#34d399;">economic engine of AI</strong>. NVIDIA became the first company in history to reach $5 trillion market cap (Oct 2025). But the landscape is shifting — DeepSeek's efficiency breakthrough, China export wars, and the rise of custom silicon are reshaping the competitive dynamics.</p>
       <div class="stat-grid">
-        <div class="stat-card"><div class="stat-value green">$3.6T</div><div class="stat-label">NVIDIA market cap (2025) — driven almost entirely by AI chip demand</div></div>
-        <div class="stat-card"><div class="stat-value green">80%+</div><div class="stat-label">NVIDIA's estimated share of the AI training GPU market</div></div>
-        <div class="stat-card"><div class="stat-value green">H100/B200</div><div class="stat-label">NVIDIA's flagship GPUs. B200 delivers 2.5× training performance vs H100</div></div>
-        <div class="stat-card"><div class="stat-value green">AUKUS</div><div class="stat-label">Pillar II includes advanced cyber & AI — opening semiconductor supply chain cooperation</div></div>
+        <div class="stat-card"><div class="stat-value green">$5T</div><div class="stat-label">NVIDIA market cap (Oct 2025) — first company ever to reach $5 trillion. Revenue: $215.9B (FY26)</div></div>
+        <div class="stat-card"><div class="stat-value green">92%</div><div class="stat-label">NVIDIA's discrete GPU market share (Q1 2025). 80%+ share in AI training/deployment GPUs</div></div>
+        <div class="stat-card"><div class="stat-value green">$600B</div><div class="stat-label">Largest one-day market cap loss in US history (Jan 2025) — triggered by DeepSeek's efficiency demo</div></div>
+        <div class="stat-card"><div class="stat-value green">$1T</div><div class="stat-label">Jensen Huang's projection for NVIDIA data centre revenue by 2028 (GTC 2025)</div></div>
       </div>
     </div>
     <div class="dd-right">
-      <h4 style="color:#e2e8f0;margin-bottom:8px;">Competitive Landscape & Australian Context</h4>
-      <div class="player-card"><div class="player-logo" style="background:#10b981;">N</div><div class="player-info"><h4>NVIDIA</h4><p>H100, B200, Blackwell. Dominant platform. CUDA software moat.</p></div></div>
-      <div class="player-card"><div class="player-logo" style="background:#ef4444;">G</div><div class="player-info"><h4>Google TPU</h4><p>Custom ASIC (Trillium 6th gen). Cloud-only. Competitive perf/watt.</p></div></div>
-      <div class="player-card"><div class="player-logo" style="background:#3b82f6;">A</div><div class="player-info"><h4>Amazon Trainium</h4><p>Trainium2 for training, Inferentia for inference. AWS-native.</p></div></div>
-      <div class="player-card"><div class="player-logo" style="background:#f59e0b;">SQC</div><div class="player-info"><h4>Silicon Quantum Computing (AU)</h4><p>UNSW spin-out backed by $130M+ AUS Gov. Silicon-based quantum computing — potential AI breakthrough.</p></div></div>
-      <div class="implication-box chips-imply"><h4>💡 Implications for Australian Business</h4><p>Australia relies entirely on imported advanced semiconductors. AUKUS Pillar II may open access to trusted supply chains. Monitor the CUDA-alternative ecosystem. Australia's quantum computing capability (SQC, Diraq, UNSW) is world-class — a long-term strategic asset.</p></div>
+      <h4 style="color:#e2e8f0;margin-bottom:8px;">Competitive Landscape & Geopolitics</h4>
+      <div class="player-card"><div class="player-logo" style="background:#10b981;">N</div><div class="player-info"><h4>NVIDIA (H100 → B200 → Blackwell Ultra → Vera Rubin)</h4><p>Blackwell launched Mar 2024. Blackwell Ultra & Vera Rubin announced GTC 2025. CUDA moat intact.</p></div></div>
+      <div class="player-card"><div class="player-logo" style="background:#ef4444;">DS</div><div class="player-info"><h4>DeepSeek (R1 & V3)</h4><p>Chinese startup that demonstrated frontier-level AI at fraction of the cost. Triggered $600B NVIDIA rout.</p></div></div>
+      <div class="player-card"><div class="player-logo" style="background:#3b82f6;">G</div><div class="player-info"><h4>Google TPU (Trillium, 6th gen)</h4><p>Custom ASIC. Competitive perf/watt. Cloud-only. Powers Gemini training & inference.</p></div></div>
+      <div class="player-card"><div class="player-logo" style="background:#f59e0b;">A</div><div class="player-info"><h4>Amazon Trainium2 & AMD MI300X</h4><p>Custom AWS silicon + AMD GPU alternative. ROCm ecosystem maturing. Inference cost pressure.</p></div></div>
+      <h4 style="color:#e2e8f0;margin-bottom:4px;margin-top:6px;">China Export Wars (2025-2026)</h4>
+      <ul class="key-points chips-bullets" style="margin-bottom:8px;">
+        <li>NVIDIA designed H20 chip specifically for Chinese market to comply with US export restrictions</li>
+        <li>Sep 2025: China's CAC banned ByteDance, Alibaba & others from buying NVIDIA RTX Pro 6000D chips</li>
+        <li>NVIDIA & AMD agreed to pay 15% of China chip revenues to US government for export licenses</li>
+        <li>China's refusal to buy could cost NVIDIA ~$30 billion. US later permitted H200 exports under conditions (2026)</li>
+      </ul>
+      <div class="implication-box chips-imply"><h4>💡 Implications for Australian Business</h4><p>Australia is entirely dependent on imported advanced semiconductors. AUKUS Pillar II opens trusted supply chain access. The DeepSeek moment shows models can be trained more efficiently — reducing GPU dependency. Australia's quantum computing research (SQC, Diraq, UNSW) is world-class — a long-term strategic asset as NVIDIA enters quantum AI (Apr 2026).</p></div>
     </div>
   </div>
   <div class="slide-footer"><span>AI Knowledge Library · github.com/kantan-sys/ai-knowledge-lib</span><span class="tag">3 / 7</span></div>
@@ -361,27 +360,27 @@
 <!-- ===== SLIDE 4: CLOUD & DATA CENTERS ===== -->
 <div class="slide" data-index="4">
   <div class="dd-header">
-    <div><div class="slide-label cloud">Layer 3 · Infrastructure</div><h2>Cloud & Data Centers <span class="au-badge"><span class="au-flag">🇦🇺</span> AU</span></h2></div>
+    <div><div class="slide-label cloud">Layer 3 · Infrastructure</div><h2>Cloud & Data Centers <span class="au-badge">🇦🇺 AU</span></h2></div>
     <div class="mini-stack"><div class="ms-layer ms-apps"><span class="ms-dot"></span>Applications</div><div class="ms-layer ms-models"><span class="ms-dot"></span>AI Models</div><div class="ms-layer ms-cloud highlight"><span class="ms-dot"></span>Cloud & Data Centers</div><div class="ms-layer ms-chips"><span class="ms-dot"></span>Chips & Computing</div><div class="ms-layer ms-energy"><span class="ms-dot"></span>Energy</div></div>
   </div>
   <div class="dd-content">
     <div class="dd-left">
-      <p class="body-text" style="margin-bottom:10px;">Cloud infrastructure is where <strong style="color:#22d3ee;">compute meets scale</strong>. Hyperscalers have invested billions in Australian regions. Sovereign cloud and data sovereignty are critical issues for government and regulated industries.</p>
+      <p class="body-text" style="margin-bottom:10px;">Cloud infrastructure is where <strong style="color:#22d3ee;">compute meets scale</strong>. Hyperscaler capex exceeded $250B in 2025 — largely AI infrastructure. Australia has become a critical Asia-Pacific data centre hub, with record investment and a growing sovereign cloud imperative.</p>
       <div class="stat-grid">
-        <div class="stat-card"><div class="stat-value cyan">$250B+</div><div class="stat-label">Global hyperscaler capex (2025). AWS, Azure, GCP all expanding Australian infrastructure</div></div>
-        <div class="stat-card"><div class="stat-value cyan">Sydney + Melb</div><div class="stat-label">Australia's two major cloud regions — AWS (ap-southeast-2), Azure (Australia East/Southeast), GCP (australia-southeast1)</div></div>
-        <div class="stat-card"><div class="stat-value cyan">NEXTDC</div><div class="stat-label">Australia's largest data center operator (ASX:NXT). 12+ facilities. Key partner for sovereign cloud.</div></div>
-        <div class="stat-card"><div class="stat-value cyan">Sovereign</div><div class="stat-label">Growing demand for sovereign cloud — data stays onshore, operated by Australian-cleared personnel</div></div>
+        <div class="stat-card"><div class="stat-value cyan">$250B+</div><div class="stat-label">Combined 2025 capex — Microsoft, Amazon, Google, Meta. AI infrastructure dominates spending</div></div>
+        <div class="stat-card"><div class="stat-value cyan">Sydney+Melb</div><div class="stat-label">AWS (ap-southeast-2), Azure (AU East/Southeast), GCP (australia-southeast1/2). All major regions operational</div></div>
+        <div class="stat-card"><div class="stat-value cyan">NEXTDC</div><div class="stat-label">Australia's largest DC operator (ASX:NXT). 12+ facilities. Key sovereign cloud partner for government</div></div>
+        <div class="stat-card"><div class="stat-value cyan">AirTrunk</div><div class="stat-label">Acquired by Blackstone for A$24B+ (2024). Major hyperscale DC footprint in Sydney & Melbourne</div></div>
       </div>
     </div>
     <div class="dd-right">
       <h4 style="color:#e2e8f0;margin-bottom:8px;">Australian Cloud & DC Landscape</h4>
-      <div class="player-card"><div class="player-logo" style="background:#f97316;">AWS</div><div class="player-info"><h4>AWS (ap-southeast-2)</h4><p>Sydney region. Bedrock, SageMaker, GPU instances available. Dominant enterprise share.</p></div></div>
-      <div class="player-card"><div class="player-logo" style="background:#3b82f6;">Az</div><div class="player-info"><h4>Microsoft Azure</h4><p>Australia East (NSW) & Southeast (VIC). OpenAI via Azure. Copilot integrated. Strong public sector.</p></div></div>
-      <div class="player-card"><div class="player-logo" style="background:#ef4444;">GCP</div><div class="player-info"><h4>Google Cloud</h4><p>Sydney (australia-southeast1) + Melbourne (australia-southeast2). Vertex AI platform. TPU access.</p></div></div>
-      <div class="player-card"><div class="player-logo" style="background:#10b981;">NX</div><div class="player-info"><h4>NEXTDC (ASX:NXT)</h4><p>S1-S5 + M1-M3 + regional. Colocation & interconnection. Critical national infrastructure.</p></div></div>
-      <div class="player-card"><div class="player-logo" style="background:#8b5cf6;">AT</div><div class="player-info"><h4>AirTrunk (acquired by Blackstone)</h4><p>Hyperscale data centers in Sydney & Melbourne. AU$24B+ valuation. Major AI infrastructure play.</p></div></div>
-      <div class="implication-box cloud-imply"><h4>🔌 Implications for Australian Business</h4><p>Infrastructure decisions create multi-year lock-in. Multi-cloud mitigates concentration risk. Data sovereignty is non-negotiable for government, defence, and critical infrastructure. Sovereign cloud offerings (Microsoft AU cloud, AWS Dedicated Local Zones) are maturing but carry a cost premium.</p></div>
+      <div class="player-card"><div class="player-logo" style="background:#f97316;">AWS</div><div class="player-info"><h4>AWS (ap-southeast-2)</h4><p>Sydney region. Bedrock, SageMaker, GPU instances available. Dominant enterprise share. Dedicated Local Zones for government.</p></div></div>
+      <div class="player-card"><div class="player-logo" style="background:#3b82f6;">Az</div><div class="player-info"><h4>Microsoft Azure</h4><p>Australia East (NSW) + Southeast (VIC). Exclusive OpenAI infrastructure. Copilot integrated. Strong public sector. AU sovereign cloud offering.</p></div></div>
+      <div class="player-card"><div class="player-logo" style="background:#ef4444;">GCP</div><div class="player-info"><h4>Google Cloud</h4><p>Sydney + Melbourne regions. Vertex AI platform. TPU access. Growing enterprise presence.</p></div></div>
+      <div class="player-card"><div class="player-logo" style="background:#10b981;">NX</div><div class="player-info"><h4>NEXTDC (ASX:NXT)</h4><p>S1-S5 + M1-M3 + regional. Colocation & interconnection. Designated critical national infrastructure.</p></div></div>
+      <div class="player-card"><div class="player-logo" style="background:#8b5cf6;">CDC</div><div class="player-info"><h4>Canberra Data Centres</h4><p>Purpose-built for government. Sovereign cloud. Expanding beyond Canberra into Sydney and regional AU.</p></div></div>
+      <div class="implication-box cloud-imply"><h4>🔌 Implications for Australian Business</h4><p>Infrastructure decisions create multi-year lock-in. Multi-cloud strategies mitigate concentration risk. Data sovereignty is mandatory for government, defence, and critical infrastructure. Sovereign cloud offerings (Microsoft AU cloud, AWS Dedicated Local Zones, CDC) are maturing — at a 20-30% cost premium.</p></div>
     </div>
   </div>
   <div class="slide-footer"><span>AI Knowledge Library · github.com/kantan-sys/ai-knowledge-lib</span><span class="tag">4 / 7</span></div>
@@ -390,30 +389,30 @@
 <!-- ===== SLIDE 5: AI MODELS ===== -->
 <div class="slide" data-index="5">
   <div class="dd-header">
-    <div><div class="slide-label models">Layer 4 · Intelligence</div><h2>AI Models <span class="au-badge"><span class="au-flag">🇦🇺</span> AU</span></h2></div>
+    <div><div class="slide-label models">Layer 4 · Intelligence</div><h2>AI Models <span class="au-badge">🇦🇺 AU</span></h2></div>
     <div class="mini-stack"><div class="ms-layer ms-apps"><span class="ms-dot"></span>Applications</div><div class="ms-layer ms-models highlight"><span class="ms-dot"></span>AI Models</div><div class="ms-layer ms-cloud"><span class="ms-dot"></span>Cloud & Data Centers</div><div class="ms-layer ms-chips"><span class="ms-dot"></span>Chips & Computing</div><div class="ms-layer ms-energy"><span class="ms-dot"></span>Energy</div></div>
   </div>
   <div class="dd-content">
     <div class="dd-left">
-      <p class="body-text" style="margin-bottom:10px;">Foundation models are the <strong style="color:#60a5fa;">brains of the stack</strong>. Australia is a net importer of AI models — but sovereign AI initiatives (CSIRO, universities) and local model adaptation are gaining momentum.</p>
+      <p class="body-text" style="margin-bottom:10px;">Foundation models are the <strong style="color:#60a5fa;">brains of the stack</strong>. The frontier has advanced rapidly — but the biggest story of 2025 was DeepSeek R1: a Chinese model matching GPT-4-level capability at a fraction of the training cost. The open vs. closed battle is intensifying, and Australia is building sovereign capability.</p>
       <div class="stat-grid">
-        <div class="stat-card"><div class="stat-value blue">GPT-4o</div><div class="stat-label">OpenAI multimodal. Australian data residency via Azure AU region. Widely adopted.</div></div>
-        <div class="stat-card"><div class="stat-value blue">Claude 4</div><div class="stat-label">Anthropic. Available via AWS Bedrock (Sydney). Emphasis on safety & constitutional AI.</div></div>
-        <div class="stat-card"><div class="stat-value blue">Gemini 2.5</div><div class="stat-label">Google. Available via Vertex AI (Sydney). 1M+ token context. Multimodal.</div></div>
-        <div class="stat-card"><div class="stat-value blue">Llama 4</div><div class="stat-label">Meta open-source. Can run on Australian infrastructure. Sovereign deployment option.</div></div>
+        <div class="stat-card"><div class="stat-value blue">GPT-4o</div><div class="stat-label">OpenAI. Omni-modal (text, vision, audio). Available via Azure Australia. Widely adopted enterprise choice.</div></div>
+        <div class="stat-card"><div class="stat-value blue">Claude 4</div><div class="stat-label">Anthropic. Available via AWS Bedrock (Sydney). Emphasis on safety & constitutional AI. Strong reasoning.</div></div>
+        <div class="stat-card"><div class="stat-value blue">Gemini 2.5</div><div class="stat-label">Google. Available via Vertex AI (Sydney). 1M+ token context window. Leading multimodal benchmarks.</div></div>
+        <div class="stat-card"><div class="stat-value blue">DeepSeek R1</div><div class="stat-label">Open-source Chinese model. Matched GPT-4 at ~5% of reported training cost. Triggered $600B NVIDIA rout.</div></div>
       </div>
     </div>
     <div class="dd-right">
-      <h4 style="color:#e2e8f0;margin-bottom:8px;">Sovereign AI & Australian Capability</h4>
+      <h4 style="color:#e2e8f0;margin-bottom:8px;">Key Model Dynamics & Australian Context</h4>
       <ul class="key-points models-bullets">
-        <li><strong>CSIRO Data61.</strong> Australia's national science agency. Research in NLP, computer vision, and responsible AI. Language models for Australian context</li>
-        <li><strong>AustLang.</strong> Australian Government's own LLM initiative — sovereign, secure AI for government use cases</li>
-        <li><strong>University research.</strong> ANU, UNSW, University of Sydney, Monash — world-class AI/ML research groups. Key talent pipeline</li>
-        <li><strong>Open vs. closed.</strong> Llama, Mistral, DeepSeek for sovereign on-prem deployment. OpenAI/Anthropic via cloud for rapid innovation</li>
-        <li><strong>Small models.</strong> Increasingly viable for enterprise at low cost. Key for Australian mid-market and regulated sectors</li>
-        <li><strong>AI safety.</strong> Australia's AI Ethics Principles (8 voluntary principles). Potential mandatory guardrails under consultation</li>
+        <li><strong>Open vs. Closed intensifying.</strong> Llama 4, Mistral, DeepSeek R1 lead open-source. OpenAI, Anthropic, Google lead proprietary. Open models now competitive on capability</li>
+        <li><strong>DeepSeek's efficiency shock.</strong> Demonstrated frontier performance with dramatically lower compute. Challenges the "more GPUs = better" assumption</li>
+        <li><strong>Agentic AI.</strong> Models increasingly capable of tool use, planning, multi-step reasoning. NVIDIA's Isaac GR00T N1 and Cosmos targeting autonomous systems and robotics</li>
+        <li><strong>CSIRO Data61.</strong> Australia's national science agency. NLP, computer vision, responsible AI research. Language models for Australian context</li>
+        <li><strong>AustLang.</strong> Australian Government's sovereign LLM. Secure, onshore AI for government use cases</li>
+        <li><strong>AI safety regulation.</strong> Australia's 8 voluntary AI Ethics Principles. Mandatory guardrails under active consultation. EU AI Act influence growing</li>
       </ul>
-      <div class="implication-box models-imply"><h4>🧠 Implications for Australian Business</h4><p>Model selection is a portfolio decision. Open-source models offer sovereign deployment and lower cost. Closed models lead on capability. For regulated industries — consider on-shore model hosting. Australia's AI ethics framework signals the direction of future regulation.</p></div>
+      <div class="implication-box models-imply"><h4>🧠 Implications for Australian Business</h4><p>Model selection is now a portfolio decision. Open-source models (Llama, DeepSeek) enable sovereign deployment at lower cost. Closed models lead on frontier capability. DeepSeek proved efficiency matters as much as scale. For regulated industries — on-shore model hosting is becoming a compliance requirement.</p></div>
     </div>
   </div>
   <div class="slide-footer"><span>AI Knowledge Library · github.com/kantan-sys/ai-knowledge-lib</span><span class="tag">5 / 7</span></div>
@@ -422,30 +421,30 @@
 <!-- ===== SLIDE 6: APPLICATIONS ===== -->
 <div class="slide" data-index="6">
   <div class="dd-header">
-    <div><div class="slide-label apps">Layer 5 · Value</div><h2>Applications <span class="au-badge"><span class="au-flag">🇦🇺</span> AU</span></h2></div>
+    <div><div class="slide-label apps">Layer 5 · Value</div><h2>Applications <span class="au-badge">🇦🇺 AU</span></h2></div>
     <div class="mini-stack"><div class="ms-layer ms-apps highlight"><span class="ms-dot"></span>Applications</div><div class="ms-layer ms-models"><span class="ms-dot"></span>AI Models</div><div class="ms-layer ms-cloud"><span class="ms-dot"></span>Cloud & Data Centers</div><div class="ms-layer ms-chips"><span class="ms-dot"></span>Chips & Computing</div><div class="ms-layer ms-energy"><span class="ms-dot"></span>Energy</div></div>
   </div>
   <div class="dd-content">
     <div class="dd-left">
-      <p class="body-text" style="margin-bottom:10px;">Applications are <strong style="color:#a78bfa;">where value is captured</strong>. Australia punches above its weight in mining tech, agtech, fintech, and health AI — sectors where we have natural competitive advantages.</p>
+      <p class="body-text" style="margin-bottom:10px;">Applications are <strong style="color:#a78bfa;">where value is captured</strong>. Australia punches above its weight in mining tech, agtech, fintech, health AI, and enterprise SaaS — sectors where we have natural competitive advantages that AI amplifies.</p>
       <div class="stat-grid">
         <div class="stat-card"><div class="stat-value purple">$15.7T</div><div class="stat-label">PwC estimate of AI's potential global economic contribution by 2030</div></div>
         <div class="stat-card"><div class="stat-value purple">A$600B+</div><div class="stat-label">Potential AI contribution to Australia's economy by 2030 (CSIRO/Data61 estimate)</div></div>
-        <div class="stat-card"><div class="stat-value purple">40%</div><div class="stat-label">Average productivity gain reported by early enterprise AI adopters</div></div>
-        <div class="stat-card"><div class="stat-value purple">2025+</div><div class="stat-label">Year of AI agents — autonomous systems moving from pilot to production globally</div></div>
+        <div class="stat-card"><div class="stat-value purple">72%</div><div class="stat-label">Organisations that adopted AI in at least one business function (McKinsey 2024 global survey)</div></div>
+        <div class="stat-card"><div class="stat-value purple">2025+</div><div class="stat-label">Year of AI agents — autonomous AI systems moving from pilot to production globally</div></div>
       </div>
     </div>
     <div class="dd-right">
-      <h4 style="color:#e2e8f0;margin-bottom:8px;">Australian Use Cases</h4>
+      <h4 style="color:#e2e8f0;margin-bottom:8px;">Australian Use Cases — Where We Lead</h4>
       <ul class="key-points apps-bullets">
-        <li><strong>Mining & Resources.</strong> Rio Tinto & BHP autonomous haulage, predictive maintenance, mineral exploration AI (SensOre). Australia leads globally</li>
-        <li><strong>Agtech.</strong> CSIRO Ag2050, AI-powered weed detection (AgriWebb), livestock monitoring, climate-resilient farming</li>
-        <li><strong>Financial Services.</strong> CBA & ANZ AI fraud detection, Afterpay/PayTo risk models, compliance automation (APRA-regulated)</li>
-        <li><strong>Health & MedTech.</strong> Harrison.ai (radiology), Prospection (health data analytics), Australian Digital Health Agency AI roadmap</li>
-        <li><strong>GovTech.</strong> AustLang sovereign LLM, myGov AI-assisted services, ATO compliance AI, Digital ID integration</li>
-        <li><strong>SaaS & Enterprise.</strong> Canva AI, Atlassian Intelligence, Employment Hero — Australian-built AI features scaling globally</li>
+        <li><strong>Mining & Resources.</strong> Rio Tinto & BHP autonomous haulage (world's largest autonomous fleet), predictive maintenance, SensOre AI mineral exploration. Australian mining tech is globally exported</li>
+        <li><strong>Agtech.</strong> CSIRO Ag2050, AI-powered weed detection (AgriWebb), livestock monitoring, climate-adaptive farming. Australia's ag expertise + AI = global export opportunity</li>
+        <li><strong>Financial Services.</strong> CBA & ANZ AI fraud detection, Afterpay/PayTo risk models, APRA-regulated compliance automation, Australian AI-powered superannuation platforms</li>
+        <li><strong>Health & MedTech.</strong> Harrison.ai (radiology AI, global expansion), Prospection (health data analytics), Australian Digital Health Agency AI roadmap</li>
+        <li><strong>GovTech.</strong> AustLang sovereign LLM, myGov AI-assisted services, ATO compliance AI, Digital ID integration, Services Australia automation</li>
+        <li><strong>SaaS & Enterprise.</strong> Canva AI (used by 200M+ people), Atlassian Intelligence (Jira/Confluence AI), Employment Hero — Australian-built AI scaling globally</li>
       </ul>
-      <div class="implication-box apps-imply"><h4>🚀 Implications for Australian Business</h4><p>Australia's competitive moat is domain expertise — mining, agriculture, health, and financial services. AI amplifies this. Companies should embed AI into existing products and workflows, invest in change management, and treat AI fluency as a workforce-wide capability (not just a tech team concern).</p></div>
+      <div class="implication-box apps-imply"><h4>🚀 Implications for Australian Business</h4><p>Australia's competitive moat is domain expertise — mining, agriculture, health, and financial services. AI amplifies this expertise into globally exportable products. Embed AI into existing workflows. Invest in change management. Build AI fluency as a workforce-wide capability, not just a tech team concern.</p></div>
     </div>
   </div>
   <div class="slide-footer"><span>AI Knowledge Library · github.com/kantan-sys/ai-knowledge-lib</span><span class="tag">6 / 7</span></div>
@@ -454,39 +453,39 @@
 <!-- ===== SLIDE 7: TAKEAWAYS ===== -->
 <div class="slide" data-index="7">
   <div class="dd-header">
-    <div><div class="slide-label takeaways">Summary</div><h2>Key Takeaways — Australian Perspective <span class="au-badge"><span class="au-flag">🇦🇺</span> AU</span></h2></div>
-    <div class="slide-meta">Bringing it all together</div>
+    <div><div class="slide-label takeaways">Summary</div><h2>Key Takeaways — Australian Perspective <span class="au-badge">🇦🇺 AU</span></h2></div>
+    <div class="slide-meta">Updated June 2026</div>
   </div>
   <div class="takeaway-grid">
     <div class="takeaway-card ta-energy">
       <div class="ta-icon">⚡</div>
       <h3>Energy Is the Binding Constraint</h3>
-      <p>Australia's NEM grid is under growing pressure from data center demand. Our renewable energy abundance is a strategic advantage — but transmission and firming (Snowy 2.0, batteries) must keep pace with AI growth.</p>
+      <p>Australia's NEM grid faces growing data centre demand. Our renewable abundance is a strategic asset — but transmission (EnergyConnect, HumeLink, Marinus) and firming (Snowy 2.0, batteries) must keep pace with AI growth.</p>
     </div>
     <div class="takeaway-card ta-chips">
       <div class="ta-icon">💻</div>
-      <h3>Sovereign Capability Gap</h3>
-      <p>Australia is entirely dependent on imported advanced chips. AUKUS and quantum computing research (SQC, Diraq) offer long-term strategic hedges. Short-term: manage supplier concentration risk.</p>
+      <h3>Chip Geopolitics Are Volatile</h3>
+      <p>NVIDIA hit $5T then lost $600B in a day. DeepSeek proved efficiency can beat brute force. China export controls are reshaping supply chains. Australia must navigate AUKUS and build sovereign quantum capability.</p>
     </div>
     <div class="takeaway-card ta-cloud">
       <div class="ta-icon">☁️</div>
-      <h3>Data Sovereignty Is Non-Negotiable</h3>
-      <p>Government, defence, and critical infrastructure require onshore data. Hyperscalers (AWS, Azure, GCP) serve Australian regions. Sovereign cloud (NEXTDC, AU cloud) is maturing — at a premium.</p>
+      <h3>Data Sovereignty Is Mandatory</h3>
+      <p>Government, defence, and critical infrastructure require onshore data. Hyperscalers serve Australian regions. Sovereign cloud (NEXTDC, CDC, Azure AU cloud) is maturing — plan for a 20-30% cost premium.</p>
     </div>
     <div class="takeaway-card ta-models">
       <div class="ta-icon">🧠</div>
-      <h3>Models Are Commoditizing</h3>
-      <p>Open-source models (Llama, Mistral) enable sovereign deployment. Closed models lead on capability. Australia's competitive advantage lies in domain-specific adaptation, not model building.</p>
+      <h3>Models Are Commoditising — Fast</h3>
+      <p>DeepSeek R1 matched GPT-4 at ~5% of the cost. Open-source is closing the gap. Australia's advantage lies in domain-specific adaptation (mining, health, agtech), not model building.</p>
     </div>
     <div class="takeaway-card ta-apps">
       <div class="ta-icon">🚀</div>
       <h3>Build on Australian Strengths</h3>
-      <p>Mining, agtech, health, fintech — sectors where Australia has global leadership. AI amplifies our domain expertise. Build AI into products and workflows, not bolt-on experiments.</p>
+      <p>Mining, agtech, health, fintech — sectors where Australia leads globally. AI amplifies our domain expertise into exportable products. Embed AI into workflows, not bolt-on experiments.</p>
     </div>
     <div class="takeaway-card ta-all">
       <div class="ta-icon">🔗</div>
       <h3>Full-Stack Thinking Required</h3>
-      <p>Energy → Chips → Cloud → Models → Applications. Every layer is connected. Australia's AI strategy must address the full stack — or risk critical dependencies in the layers below.</p>
+      <p>Energy → Chips → Cloud → Models → Applications. Every layer is connected. Australia's AI strategy must address the full stack — or risk critical dependencies in the layers below. Sovereign capability matters.</p>
     </div>
   </div>
   <div class="slide-footer"><span>AI Knowledge Library · github.com/kantan-sys/ai-knowledge-lib</span><span class="tag">7 / 7</span></div>
@@ -494,7 +493,6 @@
 
 </div></div>
 
-<!-- ===== NAVIGATION ===== -->
 <div class="nav-bar">
   <button class="nav-btn" id="prevBtn" onclick="navigate(-1)" disabled>←</button>
   <span class="slide-counter" id="counter">1 / 7</span>
