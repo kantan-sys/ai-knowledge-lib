@@ -39,7 +39,7 @@
     right: -120px;
     width: 500px;
     height: 500px;
-    background: radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(249,115,22,0.06) 0%, transparent 70%);
     border-radius: 50%;
   }
   .slide::after {
@@ -49,7 +49,7 @@
     left: -80px;
     width: 400px;
     height: 400px;
-    background: radial-gradient(circle, rgba(16,185,129,0.06) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(99,102,241,0.06) 0%, transparent 70%);
     border-radius: 50%;
   }
 
@@ -60,14 +60,14 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 36px;
+    margin-bottom: 28px;
   }
   .header-left .label {
     font-size: 12px;
     font-weight: 700;
     letter-spacing: 3px;
     text-transform: uppercase;
-    color: #6366f1;
+    color: #f97316;
     margin-bottom: 4px;
   }
   .header-left h1 {
@@ -77,7 +77,7 @@
     letter-spacing: -0.5px;
   }
   .header-left h1 span {
-    background: linear-gradient(135deg, #6366f1, #818cf8);
+    background: linear-gradient(135deg, #f97316, #fb923c);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -93,8 +93,8 @@
     font-size: 16px;
     color: #94a3b8;
     line-height: 1.6;
-    margin-bottom: 40px;
-    max-width: 750px;
+    margin-bottom: 36px;
+    max-width: 780px;
   }
 
   /* The 5-Layer Cake */
@@ -143,16 +143,17 @@
   .layer-content p {
     font-size: 13px;
     line-height: 1.5;
-    opacity: 0.8;
+    opacity: 0.85;
   }
 
   .layer-icons {
     margin-left: auto;
     display: flex;
     gap: 10px;
-    font-size: 11px;
     font-weight: 600;
     flex-shrink: 0;
+    flex-wrap: wrap;
+    justify-content: flex-end;
   }
   .layer-icons span {
     padding: 4px 10px;
@@ -160,29 +161,29 @@
     font-size: 11px;
   }
 
-  /* Layer 1 - Strategy (top) */
-  .layer-1 {
-    background: linear-gradient(135deg, #312e81 0%, #4338ca 100%);
-    color: #e0e7ff;
+  /* Layer 5 - Applications (top) */
+  .layer-5 {
+    background: linear-gradient(135deg, #4c1d95 0%, #7c3aed 100%);
+    color: #ede9fe;
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
   }
-  .layer-1 .layer-number { background: rgba(255,255,255,0.15); color: #c7d2fe; }
-  .layer-1 .layer-content h3 { color: #eef2ff; }
-  .layer-1 .layer-content p { color: #c7d2fe; }
-  .layer-1 .layer-icons span { background: rgba(255,255,255,0.12); color: #c7d2fe; }
+  .layer-5 .layer-number { background: rgba(255,255,255,0.15); color: #ddd6fe; }
+  .layer-5 .layer-content h3 { color: #f5f3ff; }
+  .layer-5 .layer-content p { color: #ddd6fe; }
+  .layer-5 .layer-icons span { background: rgba(255,255,255,0.12); color: #ddd6fe; }
 
-  /* Layer 2 - Applications */
-  .layer-2 {
-    background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+  /* Layer 4 - AI Models */
+  .layer-4 {
+    background: linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%);
     color: #dbeafe;
   }
-  .layer-2 .layer-number { background: rgba(255,255,255,0.15); color: #bfdbfe; }
-  .layer-2 .layer-content h3 { color: #eff6ff; }
-  .layer-2 .layer-content p { color: #bfdbfe; }
-  .layer-2 .layer-icons span { background: rgba(255,255,255,0.12); color: #bfdbfe; }
+  .layer-4 .layer-number { background: rgba(255,255,255,0.15); color: #bfdbfe; }
+  .layer-4 .layer-content h3 { color: #eff6ff; }
+  .layer-4 .layer-content p { color: #bfdbfe; }
+  .layer-4 .layer-icons span { background: rgba(255,255,255,0.12); color: #bfdbfe; }
 
-  /* Layer 3 - Models */
+  /* Layer 3 - Cloud & Data Center */
   .layer-3 {
     background: linear-gradient(135deg, #0891b2 0%, #06b6d4 100%);
     color: #cffafe;
@@ -192,40 +193,40 @@
   .layer-3 .layer-content p { color: #a5f3fc; }
   .layer-3 .layer-icons span { background: rgba(255,255,255,0.12); color: #a5f3fc; }
 
-  /* Layer 4 - Infrastructure */
-  .layer-4 {
+  /* Layer 2 - Chips & Computing */
+  .layer-2 {
     background: linear-gradient(135deg, #059669 0%, #10b981 100%);
     color: #d1fae5;
   }
-  .layer-4 .layer-number { background: rgba(255,255,255,0.15); color: #a7f3d0; }
-  .layer-4 .layer-content h3 { color: #ecfdf5; }
-  .layer-4 .layer-content p { color: #a7f3d0; }
-  .layer-4 .layer-icons span { background: rgba(255,255,255,0.12); color: #a7f3d0; }
+  .layer-2 .layer-number { background: rgba(255,255,255,0.15); color: #a7f3d0; }
+  .layer-2 .layer-content h3 { color: #ecfdf5; }
+  .layer-2 .layer-content p { color: #a7f3d0; }
+  .layer-2 .layer-icons span { background: rgba(255,255,255,0.12); color: #a7f3d0; }
 
-  /* Layer 5 - Data (bottom) */
-  .layer-5 {
-    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-    color: #e2e8f0;
+  /* Layer 1 - Energy (bottom / foundation) */
+  .layer-1 {
+    background: linear-gradient(135deg, #b45309 0%, #f97316 100%);
+    color: #fff7ed;
     border-bottom-left-radius: 8px;
     border-bottom-right-radius: 8px;
   }
-  .layer-5 .layer-number { background: rgba(255,255,255,0.1); color: #cbd5e1; }
-  .layer-5 .layer-content h3 { color: #f8fafc; }
-  .layer-5 .layer-content p { color: #cbd5e1; }
-  .layer-5 .layer-icons span { background: rgba(255,255,255,0.1); color: #cbd5e1; }
+  .layer-1 .layer-number { background: rgba(255,255,255,0.15); color: #fed7aa; }
+  .layer-1 .layer-content h3 { color: #fff7ed; }
+  .layer-1 .layer-content p { color: #fed7aa; }
+  .layer-1 .layer-icons span { background: rgba(255,255,255,0.12); color: #fed7aa; }
 
   /* Footer */
   .footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 32px;
+    margin-top: 30px;
     font-size: 12px;
     color: #475569;
   }
   .footer .tag {
-    background: rgba(99,102,241,0.12);
-    color: #818cf8;
+    background: rgba(249,115,22,0.12);
+    color: #fb923c;
     padding: 4px 12px;
     border-radius: 4px;
   }
@@ -243,7 +244,7 @@
 
   <div class="header">
     <div class="header-left">
-      <div class="label">Foundation</div>
+      <div class="label">The Stack</div>
       <h1>The <span>5-Layered Cake</span> of AI</h1>
     </div>
     <div class="header-right">
@@ -253,83 +254,84 @@
   </div>
 
   <p class="subtitle">
-    AI is not a single technology — it is a <strong>stack</strong> of interdependent layers.
-    Each layer builds on the one below it. To succeed with AI in the enterprise, you must
-    get every layer right.
+    AI is not a single technology — it is a <strong>stack</strong> of interdependent layers,
+    each enabling the one above it. From the raw power that fuels it to the applications
+    that create real-world value, every layer is essential.
   </p>
 
   <div class="cake">
 
-    <!-- Layer 1: Strategy & Governance (Top) -->
-    <div class="layer layer-1">
+    <!-- Layer 5: Applications (Top) -->
+    <div class="layer layer-5">
       <div class="layer-number">5</div>
       <div class="layer-content">
-        <h3>Strategy & Governance</h3>
-        <p>Vision, ethical guardrails, regulatory compliance, ROI frameworks, and organisational alignment</p>
+        <h3>Applications</h3>
+        <p>Where consumer and enterprise value is realised — drug discovery, legal copilots, robotics, financial services, and beyond</p>
       </div>
       <div class="layer-icons">
-        <span>EU AI Act</span>
-        <span>ISO 42001</span>
-        <span>NIST AI RMF</span>
+        <span>Drug Discovery</span>
+        <span>Legal Copilot</span>
+        <span>Robotics</span>
+        <span>Financial Services</span>
       </div>
     </div>
 
-    <!-- Layer 2: Applications & Experiences -->
-    <div class="layer layer-2">
+    <!-- Layer 4: AI Models -->
+    <div class="layer layer-4">
       <div class="layer-number">4</div>
       <div class="layer-content">
-        <h3>Applications & Experiences</h3>
-        <p>AI-powered products, copilots, agents, chatbots, and decision-support systems that users interact with</p>
+        <h3>AI Models</h3>
+        <p>Foundational machine learning algorithms and Large Language Models (LLMs) that process data, text, and images</p>
       </div>
       <div class="layer-icons">
-        <span>Copilot</span>
-        <span>AI Agents</span>
-        <span>RAG</span>
+        <span>LLMs</span>
+        <span>GPT-4</span>
+        <span>Claude</span>
+        <span>Computer Vision</span>
       </div>
     </div>
 
-    <!-- Layer 3: Models & Algorithms -->
+    <!-- Layer 3: Cloud & Data Center Infrastructure -->
     <div class="layer layer-3">
       <div class="layer-number">3</div>
       <div class="layer-content">
-        <h3>Models & Algorithms</h3>
-        <p>Foundation models, fine-tuned LLMs, classical ML, computer vision, NLP — the engines of intelligence</p>
+        <h3>Cloud & Data Center Infrastructure</h3>
+        <p>Server farms, optical interconnects, and networking fabrics that connect thousands of chips into massive AI data centers</p>
       </div>
       <div class="layer-icons">
-        <span>GPT-4</span>
-        <span>Claude</span>
-        <span>Llama</span>
-        <span>Gemini</span>
+        <span>Server Farms</span>
+        <span>Optical Interconnects</span>
+        <span>Networking Fabrics</span>
       </div>
     </div>
 
-    <!-- Layer 2: Infrastructure & Compute -->
-    <div class="layer layer-4">
+    <!-- Layer 2: Chips & Computing Infrastructure -->
+    <div class="layer layer-2">
       <div class="layer-number">2</div>
       <div class="layer-content">
-        <h3>Infrastructure & Compute</h3>
-        <p>Cloud platforms, GPUs, MLOps pipelines, vector databases, model serving, and orchestration</p>
+        <h3>Chips & Computing Infrastructure</h3>
+        <p>The hardware layer that powers AI — GPUs, CPUs, and specialized semiconductors that perform the computation</p>
       </div>
       <div class="layer-icons">
-        <span>AWS</span>
-        <span>Azure</span>
-        <span>GCP</span>
-        <span>Kubernetes</span>
+        <span>NVIDIA GPUs</span>
+        <span>CPUs</span>
+        <span>AI Accelerators</span>
+        <span>Specialized Silicon</span>
       </div>
     </div>
 
-    <!-- Layer 1: Data (Bottom / Foundation) -->
-    <div class="layer layer-5">
+    <!-- Layer 1: Energy (Bottom / Foundation) -->
+    <div class="layer layer-1">
       <div class="layer-number">1</div>
       <div class="layer-content">
-        <h3>Data &mdash; The Foundation</h3>
-        <p>Data quality, governance, pipelines, labelling, storage, and the raw material that fuels everything above</p>
+        <h3>Energy &mdash; The Foundation</h3>
+        <p>Generating, processing, and training intelligence in real time requires massive amounts of power</p>
       </div>
       <div class="layer-icons">
-        <span>Data Lakes</span>
-        <span>ETL</span>
-        <span>Quality</span>
-        <span>Lineage</span>
+        <span>Power Generation</span>
+        <span>Grid Infrastructure</span>
+        <span>Cooling</span>
+        <span>Sustainability</span>
       </div>
     </div>
 
