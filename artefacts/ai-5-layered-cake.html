@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI: The 5-Layered Cake</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #0a0e17;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+
+  .slide {
+    width: 1280px;
+    height: 720px;
+    background: linear-gradient(145deg, #0d1321 0%, #1a1f2e 100%);
+    border-radius: 12px;
+    padding: 56px 72px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 25px 80px rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  /* Background decorative elements */
+  .slide::before {
+    content: '';
+    position: absolute;
+    top: -120px;
+    right: -120px;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .slide::after {
+    content: '';
+    position: absolute;
+    bottom: -100px;
+    left: -80px;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(16,185,129,0.06) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .slide > * { position: relative; z-index: 1; }
+
+  /* Header */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 36px;
+  }
+  .header-left .label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #6366f1;
+    margin-bottom: 4px;
+  }
+  .header-left h1 {
+    font-size: 38px;
+    font-weight: 800;
+    color: #f1f5f9;
+    letter-spacing: -0.5px;
+  }
+  .header-left h1 span {
+    background: linear-gradient(135deg, #6366f1, #818cf8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .header-right {
+    text-align: right;
+    font-size: 13px;
+    color: #64748b;
+  }
+
+  /* Subtitle */
+  .subtitle {
+    font-size: 16px;
+    color: #94a3b8;
+    line-height: 1.6;
+    margin-bottom: 40px;
+    max-width: 750px;
+  }
+
+  /* The 5-Layer Cake */
+  .cake {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 0;
+    width: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 30px rgba(0,0,0,0.3);
+  }
+
+  .layer {
+    display: flex;
+    align-items: center;
+    padding: 20px 28px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: default;
+    position: relative;
+  }
+  .layer:hover {
+    transform: translateX(8px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    z-index: 2;
+  }
+
+  .layer-number {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 800;
+    margin-right: 24px;
+    flex-shrink: 0;
+  }
+
+  .layer-content h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+  .layer-content p {
+    font-size: 13px;
+    line-height: 1.5;
+    opacity: 0.8;
+  }
+
+  .layer-icons {
+    margin-left: auto;
+    display: flex;
+    gap: 10px;
+    font-size: 11px;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  .layer-icons span {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+  }
+
+  /* Layer 1 - Strategy (top) */
+  .layer-1 {
+    background: linear-gradient(135deg, #312e81 0%, #4338ca 100%);
+    color: #e0e7ff;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+  }
+  .layer-1 .layer-number { background: rgba(255,255,255,0.15); color: #c7d2fe; }
+  .layer-1 .layer-content h3 { color: #eef2ff; }
+  .layer-1 .layer-content p { color: #c7d2fe; }
+  .layer-1 .layer-icons span { background: rgba(255,255,255,0.12); color: #c7d2fe; }
+
+  /* Layer 2 - Applications */
+  .layer-2 {
+    background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+    color: #dbeafe;
+  }
+  .layer-2 .layer-number { background: rgba(255,255,255,0.15); color: #bfdbfe; }
+  .layer-2 .layer-content h3 { color: #eff6ff; }
+  .layer-2 .layer-content p { color: #bfdbfe; }
+  .layer-2 .layer-icons span { background: rgba(255,255,255,0.12); color: #bfdbfe; }
+
+  /* Layer 3 - Models */
+  .layer-3 {
+    background: linear-gradient(135deg, #0891b2 0%, #06b6d4 100%);
+    color: #cffafe;
+  }
+  .layer-3 .layer-number { background: rgba(255,255,255,0.15); color: #a5f3fc; }
+  .layer-3 .layer-content h3 { color: #ecfeff; }
+  .layer-3 .layer-content p { color: #a5f3fc; }
+  .layer-3 .layer-icons span { background: rgba(255,255,255,0.12); color: #a5f3fc; }
+
+  /* Layer 4 - Infrastructure */
+  .layer-4 {
+    background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+    color: #d1fae5;
+  }
+  .layer-4 .layer-number { background: rgba(255,255,255,0.15); color: #a7f3d0; }
+  .layer-4 .layer-content h3 { color: #ecfdf5; }
+  .layer-4 .layer-content p { color: #a7f3d0; }
+  .layer-4 .layer-icons span { background: rgba(255,255,255,0.12); color: #a7f3d0; }
+
+  /* Layer 5 - Data (bottom) */
+  .layer-5 {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    color: #e2e8f0;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+  }
+  .layer-5 .layer-number { background: rgba(255,255,255,0.1); color: #cbd5e1; }
+  .layer-5 .layer-content h3 { color: #f8fafc; }
+  .layer-5 .layer-content p { color: #cbd5e1; }
+  .layer-5 .layer-icons span { background: rgba(255,255,255,0.1); color: #cbd5e1; }
+
+  /* Footer */
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 32px;
+    font-size: 12px;
+    color: #475569;
+  }
+  .footer .tag {
+    background: rgba(99,102,241,0.12);
+    color: #818cf8;
+    padding: 4px 12px;
+    border-radius: 4px;
+  }
+
+  /* Print / presentation mode */
+  @media print {
+    body { background: #0a0e17; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .slide { box-shadow: none; break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<div class="slide">
+
+  <div class="header">
+    <div class="header-left">
+      <div class="label">Foundation</div>
+      <h1>The <span>5-Layered Cake</span> of AI</h1>
+    </div>
+    <div class="header-right">
+      AI Knowledge Library<br>
+      artefacts/ai-5-layered-cake
+    </div>
+  </div>
+
+  <p class="subtitle">
+    AI is not a single technology — it is a <strong>stack</strong> of interdependent layers.
+    Each layer builds on the one below it. To succeed with AI in the enterprise, you must
+    get every layer right.
+  </p>
+
+  <div class="cake">
+
+    <!-- Layer 1: Strategy & Governance (Top) -->
+    <div class="layer layer-1">
+      <div class="layer-number">5</div>
+      <div class="layer-content">
+        <h3>Strategy & Governance</h3>
+        <p>Vision, ethical guardrails, regulatory compliance, ROI frameworks, and organisational alignment</p>
+      </div>
+      <div class="layer-icons">
+        <span>EU AI Act</span>
+        <span>ISO 42001</span>
+        <span>NIST AI RMF</span>
+      </div>
+    </div>
+
+    <!-- Layer 2: Applications & Experiences -->
+    <div class="layer layer-2">
+      <div class="layer-number">4</div>
+      <div class="layer-content">
+        <h3>Applications & Experiences</h3>
+        <p>AI-powered products, copilots, agents, chatbots, and decision-support systems that users interact with</p>
+      </div>
+      <div class="layer-icons">
+        <span>Copilot</span>
+        <span>AI Agents</span>
+        <span>RAG</span>
+      </div>
+    </div>
+
+    <!-- Layer 3: Models & Algorithms -->
+    <div class="layer layer-3">
+      <div class="layer-number">3</div>
+      <div class="layer-content">
+        <h3>Models & Algorithms</h3>
+        <p>Foundation models, fine-tuned LLMs, classical ML, computer vision, NLP — the engines of intelligence</p>
+      </div>
+      <div class="layer-icons">
+        <span>GPT-4</span>
+        <span>Claude</span>
+        <span>Llama</span>
+        <span>Gemini</span>
+      </div>
+    </div>
+
+    <!-- Layer 2: Infrastructure & Compute -->
+    <div class="layer layer-4">
+      <div class="layer-number">2</div>
+      <div class="layer-content">
+        <h3>Infrastructure & Compute</h3>
+        <p>Cloud platforms, GPUs, MLOps pipelines, vector databases, model serving, and orchestration</p>
+      </div>
+      <div class="layer-icons">
+        <span>AWS</span>
+        <span>Azure</span>
+        <span>GCP</span>
+        <span>Kubernetes</span>
+      </div>
+    </div>
+
+    <!-- Layer 1: Data (Bottom / Foundation) -->
+    <div class="layer layer-5">
+      <div class="layer-number">1</div>
+      <div class="layer-content">
+        <h3>Data &mdash; The Foundation</h3>
+        <p>Data quality, governance, pipelines, labelling, storage, and the raw material that fuels everything above</p>
+      </div>
+      <div class="layer-icons">
+        <span>Data Lakes</span>
+        <span>ETL</span>
+        <span>Quality</span>
+        <span>Lineage</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    <span>AI Knowledge Library &mdash; github.com/kantan-sys/ai-knowledge-lib</span>
+    <span class="tag">ARTEFACT</span>
+  </div>
+
+</div>
+
+</body>
+</html>
