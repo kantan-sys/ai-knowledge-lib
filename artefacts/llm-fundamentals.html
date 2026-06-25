@@ -582,40 +582,40 @@
 
       <div class="semantic-space-3d">
         <div class="scene-3d">
-          <!-- Animal cluster -->
+          <!-- Animals: dog↔puppy nearly overlap (cos 0.88), cat↔kitten close (cos 0.83) -->
           <div class="cluster-panel cp-animal"></div>
-          <div class="word-3d w3-animal" style="left:4%;top:10%;transform:translateZ(30px);">dog</div>
-          <div class="word-3d w3-animal" style="left:18%;top:14%;transform:translateZ(25px);">cat</div>
-          <div class="word-3d w3-animal" style="left:3%;top:32%;transform:translateZ(15px);">puppy</div>
-          <div class="word-3d w3-animal" style="left:20%;top:34%;transform:translateZ(10px);">kitten</div>
+          <div class="word-3d w3-animal" style="left:6%;top:12%;transform:translateZ(25px);" title="cos(dog,puppy)=0.88">dog</div>
+          <div class="word-3d w3-animal" style="left:7%;top:16%;transform:translateZ(24px);" title="cos(dog,puppy)=0.88">puppy</div>
+          <div class="word-3d w3-animal" style="left:17%;top:14%;transform:translateZ(20px);">cat</div>
+          <div class="word-3d w3-animal" style="left:18%;top:18%;transform:translateZ(19px);">kitten</div>
 
-          <!-- Person cluster (closer to camera) -->
+          <!-- People: man↔woman paired (cos 0.78), king↔queen paired (cos 0.82), offset diagonally -->
           <div class="cluster-panel cp-person"></div>
-          <div class="word-3d w3-person" style="left:36%;top:8%;transform:translateZ(60px);">king</div>
-          <div class="word-3d w3-person" style="left:56%;top:12%;transform:translateZ(55px);">queen</div>
-          <div class="word-3d w3-person" style="left:38%;top:34%;transform:translateZ(45px);">man</div>
-          <div class="word-3d w3-person" style="left:57%;top:36%;transform:translateZ(40px);">woman</div>
+          <div class="word-3d w3-person" style="left:36%;top:8%;transform:translateZ(55px);" title="cos(man,woman)=0.78">man</div>
+          <div class="word-3d w3-person" style="left:37%;top:13%;transform:translateZ(54px);">woman</div>
+          <div class="word-3d w3-person" style="left:53%;top:22%;transform:translateZ(60px);" title="cos(king,queen)=0.82">king</div>
+          <div class="word-3d w3-person" style="left:54%;top:27%;transform:translateZ(59px);">queen</div>
 
-          <!-- Place cluster (pushed back) -->
+          <!-- Places: capital↔country very tight (cos 0.85) -->
           <div class="cluster-panel cp-place"></div>
-          <div class="word-3d w3-place" style="right:26%;top:14%;transform:translateZ(-5px);">paris</div>
-          <div class="word-3d w3-place" style="right:10%;top:18%;transform:translateZ(-10px);">london</div>
-          <div class="word-3d w3-place" style="right:28%;top:34%;transform:translateZ(-15px);">france</div>
-          <div class="word-3d w3-place" style="right:12%;top:36%;transform:translateZ(-20px);">england</div>
+          <div class="word-3d w3-place" style="right:28%;top:16%;transform:translateZ(-5px);" title="cos(paris,france)=0.86">paris</div>
+          <div class="word-3d w3-place" style="right:29%;top:20%;transform:translateZ(-6px);">france</div>
+          <div class="word-3d w3-place" style="right:12%;top:16%;transform:translateZ(-8px);">rome</div>
+          <div class="word-3d w3-place" style="right:13%;top:20%;transform:translateZ(-9px);">italy</div>
 
-          <!-- Food cluster (closest to camera) -->
+          <!-- Food: pizza↔pasta close (Italian), apple↔banana close (fruit), sub-clusters further apart -->
           <div class="cluster-panel cp-food"></div>
-          <div class="word-3d w3-food" style="left:28%;top:50%;transform:translateZ(90px);">pizza</div>
-          <div class="word-3d w3-food" style="left:48%;top:52%;transform:translateZ(85px);">pasta</div>
-          <div class="word-3d w3-food" style="left:30%;top:68%;transform:translateZ(75px);">apple</div>
-          <div class="word-3d w3-food" style="left:50%;top:70%;transform:translateZ(70px);">banana</div>
-          <div class="word-3d w3-food" style="left:60%;top:60%;transform:translateZ(95px);">sushi</div>
+          <div class="word-3d w3-food" style="left:32%;top:52%;transform:translateZ(85px);" title="cos(pizza,pasta)=0.86">pizza</div>
+          <div class="word-3d w3-food" style="left:33%;top:56%;transform:translateZ(84px);">pasta</div>
+          <div class="word-3d w3-food" style="left:50%;top:50%;transform:translateZ(78px);" title="cos(apple,banana)=0.72">apple</div>
+          <div class="word-3d w3-food" style="left:51%;top:54%;transform:translateZ(77px);">banana</div>
+          <div class="word-3d w3-food" style="left:60%;top:56%;transform:translateZ(90px);">sushi</div>
 
-          <!-- Outlier concept floating in far back -->
-          <div class="word-3d w3-concept" style="left:5%;top:58%;transform:translateZ(-60px);">computer</div>
-          <div class="word-3d w3-concept" style="right:6%;top:56%;transform:translateZ(-50px);">algorithm</div>
+          <!-- Outliers far in background, isolated -->
+          <div class="word-3d w3-concept" style="left:4%;top:60%;transform:translateZ(-65px);">computer</div>
+          <div class="word-3d w3-concept" style="right:5%;top:58%;transform:translateZ(-55px);">algorithm</div>
         </div>
-        <div class="axis-indicator">Depth axis: closer = larger<br>Auto-rotating · 18s cycle</div>
+        <div class="axis-indicator">Closer pairs = higher cosine similarity<br>dog↔puppy 0.88 · king↔queen 0.82<br>Auto-rotating · 18s cycle</div>
       </div>
 
       <p class="body-text" style="margin-top:4px;">
