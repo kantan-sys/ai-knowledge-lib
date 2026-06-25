@@ -244,37 +244,134 @@
   .pipeline-step .step-label { font-size: clamp(9px, 0.8vw, 10px); color: #94a3b8; margin-bottom: 4px; }
   .pipeline-arrow { color: #818cf8; font-size: clamp(14px, 1.5vw, 18px); font-weight: 700; flex-shrink: 0; }
 
-  /* 2D Semantic Space visualization */
-  .semantic-space {
-    position: relative;
-    width: 100%; height: clamp(180px, 28vh, 260px);
-    background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.06);
+  /* === 3D Semantic Space === */
+  .semantic-space-3d {
+    width: 100%; height: clamp(220px, 32vh, 300px);
+    background: radial-gradient(ellipse at center, rgba(15,17,30,1) 0%, rgba(8,10,20,1) 100%);
+    border: 1px solid rgba(255,255,255,0.06);
     border-radius: 10px; margin: clamp(8px, 1.2vh, 12px) 0;
     overflow: hidden;
+    perspective: 700px;
+    perspective-origin: 50% 45%;
+    cursor: grab;
+    position: relative;
   }
-  .semantic-space::before {
-    content: 'Semantic Space (simplified 2D view)';
-    position: absolute; top: 6px; left: 10px;
+  .semantic-space-3d::before {
+    content: 'Semantic Space · 3D View · auto-rotating';
+    position: absolute; top: 6px; left: 10px; z-index: 10;
     font-size: 9px; color: #475569; font-weight: 600;
     letter-spacing: 1px; text-transform: uppercase;
-  }
-  .sem-word {
-    position: absolute;
-    padding: 4px 10px; border-radius: 12px;
-    font-size: clamp(9px, 0.8vw, 11px); font-weight: 600;
-    white-space: nowrap;
-  }
-  .sem-animal { background: rgba(52,211,153,0.15); color: #6ee7b7; border: 1px solid rgba(52,211,153,0.25); }
-  .sem-person { background: rgba(96,165,250,0.15); color: #93c5fd; border: 1px solid rgba(96,165,250,0.25); }
-  .sem-place  { background: rgba(251,191,36,0.15); color: #fcd34d; border: 1px solid rgba(251,191,36,0.25); }
-  .sem-food   { background: rgba(244,114,182,0.15); color: #f9a8d4; border: 1px solid rgba(244,114,182,0.25); }
-  .sem-other  { background: rgba(148,163,184,0.12); color: #94a3b8; border: 1px solid rgba(148,163,184,0.2); }
-  .sem-cluster {
-    position: absolute;
-    border: 1px dashed rgba(255,255,255,0.1);
-    border-radius: 16px;
     pointer-events: none;
   }
+  .scene-3d {
+    width: 100%; height: 100%;
+    transform-style: preserve-3d;
+    transform: rotateX(8deg) rotateY(-15deg);
+    animation: sceneRotate 18s ease-in-out infinite;
+    position: relative;
+  }
+  @keyframes sceneRotate {
+    0% { transform: rotateX(8deg) rotateY(-15deg); }
+    25% { transform: rotateX(12deg) rotateY(5deg); }
+    50% { transform: rotateX(5deg) rotateY(20deg); }
+    75% { transform: rotateX(10deg) rotateY(-5deg); }
+    100% { transform: rotateX(8deg) rotateY(-15deg); }
+  }
+
+  /* Cluster panels at different depths */
+  .cluster-panel {
+    position: absolute;
+    border-radius: 14px;
+    border: 1px dashed;
+    transform-style: preserve-3d;
+    pointer-events: none;
+  }
+  .cp-animal {
+    left: 8%; top: 6%; width: 26%; height: 38%;
+    border-color: rgba(52,211,153,0.25);
+    background: rgba(52,211,153,0.04);
+    transform: translateZ(20px);
+  }
+  .cp-person {
+    left: 38%; top: 5%; width: 26%; height: 38%;
+    border-color: rgba(96,165,250,0.25);
+    background: rgba(96,165,250,0.04);
+    transform: translateZ(50px);
+  }
+  .cp-place {
+    right: 18%; top: 10%; width: 26%; height: 36%;
+    border-color: rgba(251,191,36,0.25);
+    background: rgba(251,191,36,0.04);
+    transform: translateZ(-10px);
+  }
+  .cp-food {
+    left: 32%; bottom: 3%; width: 38%; height: 32%;
+    border-color: rgba(244,114,182,0.25);
+    background: rgba(244,114,182,0.04);
+    transform: translateZ(80px);
+  }
+
+  /* Word nodes in 3D */
+  .word-3d {
+    position: absolute;
+    padding: 5px 11px; border-radius: 16px;
+    font-size: clamp(9px, 0.75vw, 10px); font-weight: 600;
+    white-space: nowrap;
+    transform-style: preserve-3d;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  .word-3d:hover {
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    z-index: 5;
+  }
+  .w3-animal {
+    background: rgba(52,211,153,0.18); color: #6ee7b7;
+    border: 1px solid rgba(52,211,153,0.35);
+  }
+  .w3-person {
+    background: rgba(96,165,250,0.18); color: #93c5fd;
+    border: 1px solid rgba(96,165,250,0.35);
+  }
+  .w3-place {
+    background: rgba(251,191,36,0.18); color: #fcd34d;
+    border: 1px solid rgba(251,191,36,0.35);
+  }
+  .w3-food {
+    background: rgba(244,114,182,0.18); color: #f9a8d4;
+    border: 1px solid rgba(244,114,182,0.35);
+  }
+  .w3-concept {
+    background: rgba(148,163,184,0.12); color: #94a3b8;
+    border: 1px solid rgba(148,163,184,0.25);
+  }
+
+  /* Connecting glow lines between related words (pseudo element trick) */
+  .word-3d.connected::after {
+    content: '';
+    position: absolute; bottom: -2px; left: 50%;
+    width: 60px; height: 2px;
+    background: linear-gradient(90deg, currentColor, transparent);
+    transform: translateX(-50%);
+    opacity: 0.3;
+  }
+
+  /* Axis indicators */
+  .axis-indicator {
+    position: absolute; bottom: 6px; right: 10px;
+    font-size: 8px; color: #475569; font-weight: 500;
+    text-align: right; line-height: 1.4;
+    pointer-events: none; z-index: 10;
+  }
+
+  /* Cluster labels */
+  .cluster-label {
+    position: absolute; top: 4px; left: 8px;
+    font-size: 8px; font-weight: 700; letter-spacing: 1px;
+    text-transform: uppercase; pointer-events: none;
+  }
+  .cl-animal { color: #34d399; } .cl-person { color: #60a5fa; }
+  .cl-place { color: #fbbf24; } .cl-food { color: #f472b6; }
 
   /* Word arithmetic diagram */
   .arithmetic-diagram {
@@ -480,40 +577,45 @@
       </div>
     </div>
     <div class="dd-right">
-      <h4 style="color:#e2e8f0;margin-bottom:8px;">Visualising Semantic Space (simplified 2D)</h4>
-      <p class="body-text" style="margin-bottom:6px;">In reality, embeddings have <strong>thousands of dimensions</strong>. But if we could squish them down to 2D, similar words would naturally cluster:</p>
+      <h4 style="color:#e2e8f0;margin-bottom:8px;">Visualising Semantic Space — 3D View</h4>
+      <p class="body-text" style="margin-bottom:6px;">In reality, embeddings have <strong>thousands of dimensions</strong>. But if we could squish them down to 3D, related words form floating clusters at different depths. The scene auto-rotates:</p>
 
-      <div class="semantic-space" style="height:clamp(200px,30vh,280px);">
-        <!-- Animal cluster (top-left) -->
-        <div class="sem-cluster" style="left:3%; top:6%; width:28%; height:42%;"></div>
-        <div class="sem-word sem-animal" style="left:5%; top:10%;">dog</div>
-        <div class="sem-word sem-animal" style="left:14%; top:8%;">cat</div>
-        <div class="sem-word sem-animal" style="left:4%; top:34%;">puppy</div>
-        <div class="sem-word sem-animal" style="left:16%; top:30%;">kitten</div>
+      <div class="semantic-space-3d">
+        <div class="scene-3d">
+          <!-- Animal cluster -->
+          <div class="cluster-panel cp-animal"></div>
+          <div class="word-3d w3-animal" style="left:4%;top:10%;transform:translateZ(30px);">dog</div>
+          <div class="word-3d w3-animal" style="left:18%;top:14%;transform:translateZ(25px);">cat</div>
+          <div class="word-3d w3-animal" style="left:3%;top:32%;transform:translateZ(15px);">puppy</div>
+          <div class="word-3d w3-animal" style="left:20%;top:34%;transform:translateZ(10px);">kitten</div>
 
-        <!-- Person cluster (top-right) -->
-        <div class="sem-cluster" style="left:34%; top:6%; width:28%; height:42%;"></div>
-        <div class="sem-word sem-person" style="left:38%; top:12%;">king</div>
-        <div class="sem-word sem-person" style="left:52%; top:14%;">queen</div>
-        <div class="sem-word sem-person" style="left:40%; top:34%;">man</div>
-        <div class="sem-word sem-person" style="left:54%; top:32%;">woman</div>
+          <!-- Person cluster (closer to camera) -->
+          <div class="cluster-panel cp-person"></div>
+          <div class="word-3d w3-person" style="left:36%;top:8%;transform:translateZ(60px);">king</div>
+          <div class="word-3d w3-person" style="left:56%;top:12%;transform:translateZ(55px);">queen</div>
+          <div class="word-3d w3-person" style="left:38%;top:34%;transform:translateZ(45px);">man</div>
+          <div class="word-3d w3-person" style="left:57%;top:36%;transform:translateZ(40px);">woman</div>
 
-        <!-- Place cluster (bottom-left) -->
-        <div class="sem-cluster" style="left:68%; top:6%; width:28%; height:42%;"></div>
-        <div class="sem-word sem-place" style="left:70%; top:12%;">paris</div>
-        <div class="sem-word sem-place" style="left:86%; top:14%;">london</div>
-        <div class="sem-word sem-place" style="left:74%; top:34%;">france</div>
-        <div class="sem-word sem-place" style="left:88%; top:30%;">england</div>
+          <!-- Place cluster (pushed back) -->
+          <div class="cluster-panel cp-place"></div>
+          <div class="word-3d w3-place" style="right:26%;top:14%;transform:translateZ(-5px);">paris</div>
+          <div class="word-3d w3-place" style="right:10%;top:18%;transform:translateZ(-10px);">london</div>
+          <div class="word-3d w3-place" style="right:28%;top:34%;transform:translateZ(-15px);">france</div>
+          <div class="word-3d w3-place" style="right:12%;top:36%;transform:translateZ(-20px);">england</div>
 
-        <!-- Food cluster (bottom-right) -->
-        <div class="sem-cluster" style="left:3%; top:52%; width:28%; height:42%;"></div>
-        <div class="sem-word sem-food" style="left:5%; top:58%;">pizza</div>
-        <div class="sem-word sem-food" style="left:18%; top:56%;">pasta</div>
-        <div class="sem-word sem-food" style="left:8%; top:80%;">apple</div>
-        <div class="sem-word sem-food" style="left:20%; top:78%;">banana</div>
+          <!-- Food cluster (closest to camera) -->
+          <div class="cluster-panel cp-food"></div>
+          <div class="word-3d w3-food" style="left:28%;top:50%;transform:translateZ(90px);">pizza</div>
+          <div class="word-3d w3-food" style="left:48%;top:52%;transform:translateZ(85px);">pasta</div>
+          <div class="word-3d w3-food" style="left:30%;top:68%;transform:translateZ(75px);">apple</div>
+          <div class="word-3d w3-food" style="left:50%;top:70%;transform:translateZ(70px);">banana</div>
+          <div class="word-3d w3-food" style="left:60%;top:60%;transform:translateZ(95px);">sushi</div>
 
-        <!-- Outlier -->
-        <div class="sem-word sem-other" style="left:50%; top:70%;">computer</div>
+          <!-- Outlier concept floating in far back -->
+          <div class="word-3d w3-concept" style="left:5%;top:58%;transform:translateZ(-60px);">computer</div>
+          <div class="word-3d w3-concept" style="right:6%;top:56%;transform:translateZ(-50px);">algorithm</div>
+        </div>
+        <div class="axis-indicator">Depth axis: closer = larger<br>Auto-rotating · 18s cycle</div>
       </div>
 
       <p class="body-text" style="margin-top:4px;">
