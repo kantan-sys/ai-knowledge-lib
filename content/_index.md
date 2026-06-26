@@ -9,9 +9,9 @@ A personal knowledge repository focused on **Artificial Intelligence** and its *
 
 ## Slide Decks
 
-- [AI: The 5-Layered Cake](/artefacts/ai-5-layered-cake.html) — Energy → Chips → Cloud → Models → Applications (Australian perspective)
-- [LLM Fundamentals](/artefacts/llm-fundamentals.html) — Tokenisation, Embeddings, Attention, Transformers, Training, Inference & Hallucination
-- [Mastering Prompts & Context](/artefacts/prompts-and-context.html) — Prompt anatomy, engineering, context windows, few-shot, chain of thought, enterprise strategy
+- [AI: The 5-Layered Cake](artefacts/ai-5-layered-cake.html) — Energy → Chips → Cloud → Models → Applications (Australian perspective)
+- [LLM Fundamentals](artefacts/llm-fundamentals.html) — Tokenisation, Embeddings, Attention, Transformers, Training, Inference & Hallucination
+- [Mastering Prompts & Context](artefacts/prompts-and-context.html) — Prompt anatomy, engineering, context windows, few-shot, chain of thought, enterprise strategy
 
 ## Topic Areas
 
