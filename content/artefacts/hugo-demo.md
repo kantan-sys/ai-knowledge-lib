@@ -1,8 +1,8 @@
 ---
 title: "Hugo-Powered Slide Deck Demo"
-type: "slide-deck"
+type: docs
 layout: "slide-deck"
-bookHidden: true
+bookHidden: false
 slides:
   - content: |
       <div class="s1-row">
