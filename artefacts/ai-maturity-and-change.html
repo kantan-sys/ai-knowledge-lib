@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Becoming AI-Enabled | AI Knowledge Library</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 100vw; height: 100vh; overflow: hidden;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #060912;
+    user-select: none;
+    display: flex; flex-direction: column;
+  }
+
+  .deck { flex: 1; position: relative; overflow: hidden; min-height: 0; }
+  .slides { position: relative; width: 100%; height: 100%; }
+
+  .slide {
+    position: absolute; inset: 0;
+    background: linear-gradient(155deg, #0d1321 0%, #141b2d 40%, #1a1f2e 100%);
+    overflow-y: auto; overflow-x: hidden;
+    display: none; flex-direction: column;
+    padding: clamp(22px, 3.5vh, 42px) clamp(18px, 4.5vw, 56px);
+  }
+  .slide.active { display: flex; }
+
+  .slide::before {
+    content: ''; position: absolute; pointer-events: none;
+    top: -10%; right: -8%;
+    width: 38vw; height: 38vw;
+    background: radial-gradient(circle, rgba(16,185,129,0.06) 0%, transparent 70%);
+    border-radius: 50%; z-index: 0;
+  }
+  .slide > * { position: relative; z-index: 1; flex-shrink: 0; }
+
+  .nav-bar {
+    flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+    gap: 20px; height: 50px; background: #060912;
+    border-top: 1px solid rgba(255,255,255,0.05);
+  }
+  .nav-btn {
+    width: 34px; height: 34px; border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.04);
+    color: #94a3b8; font-size: 15px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  .nav-btn:hover { background: rgba(16,185,129,0.2); border-color: rgba(16,185,129,0.4); color: #e2e8f0; }
+  .nav-btn:disabled { opacity: 0.3; cursor: default; }
+  .slide-counter { color: #64748b; font-size: 13px; font-weight: 500; min-width: 50px; text-align: center; }
+
+  .slide-label {
+    font-size: clamp(9px, 0.9vw, 11px); font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; margin-bottom: 4px;
+    color: #10b981;
+  }
+  h1 { font-size: clamp(22px, 2.8vw, 36px); font-weight: 800; color: #f1f5f9; letter-spacing: -0.5px; }
+  h1 span.gradient-text {
+    background: linear-gradient(135deg, #10b981, #34d399);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  h2 { font-size: clamp(18px, 2.2vw, 26px); font-weight: 700; color: #f1f5f9; margin-bottom: 12px; }
+  h3 { font-size: clamp(14px, 1.5vw, 17px); font-weight: 700; color: #e2e8f0; margin-bottom: 4px; }
+  h4 { font-size: clamp(12px, 1.2vw, 14px); font-weight: 700; color: #e2e8f0; margin-bottom: 2px; }
+  .subtitle { font-size: clamp(12px, 1.2vw, 14px); color: #94a3b8; line-height: 1.5; max-width: 680px; }
+  .body-text { font-size: clamp(11px, 1.05vw, 13px); color: #cbd5e1; line-height: 1.55; }
+  .slide-meta { text-align: right; font-size: clamp(10px, 0.85vw, 11px); color: #475569; }
+
+  .s1-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: clamp(14px, 2.5vh, 26px); }
+  .s1-toc {
+    display: grid; grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: clamp(8px, 1.2vh, 14px);
+    margin-top: clamp(16px, 3vh, 28px);
+  }
+  .s1-toc-item {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 10px; padding: clamp(14px, 2vh, 18px);
+    text-align: center;
+  }
+  .s1-toc-num {
+    font-size: clamp(20px, 2.5vw, 28px); font-weight: 900;
+    color: #10b981; margin-bottom: 4px;
+  }
+  .s1-toc-item h4 { font-size: clamp(11px, 1vw, 13px); color: #e2e8f0; margin-bottom: 2px; }
+  .s1-toc-item p { font-size: clamp(9px, 0.8vw, 10px); color: #64748b; line-height: 1.25; }
+
+  .dd-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: clamp(10px, 1.8vh, 18px); flex-shrink: 0; }
+  .dd-content { display: flex; gap: clamp(14px, 2.5vw, 28px); flex: 1; min-height: 0; }
+  .dd-left { flex: 1; min-width: 0; }
+  .dd-right { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+
+  .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(6px, 1vh, 10px); }
+  .stat-card {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px; padding: clamp(10px, 1.5vh, 14px);
+  }
+  .stat-value {
+    font-size: clamp(16px, 1.8vw, 22px); font-weight: 800; margin-bottom: 2px;
+    font-family: 'JetBrains Mono', 'Consolas', monospace;
+  }
+  .stat-value.accent { color: #34d399; }
+  .stat-value.amber { color: #fbbf24; }
+  .stat-label { font-size: clamp(9px, 0.8vw, 10px); color: #94a3b8; line-height: 1.35; }
+
+  .key-points { list-style: none; flex: 1; overflow-y: auto; }
+  .key-points li {
+    padding: clamp(4px, 0.65vh, 6px) 0; padding-left: 18px;
+    position: relative; font-size: clamp(10px, 0.95vw, 12px); color: #cbd5e1;
+    line-height: 1.5; border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .key-points li::before {
+    content: ''; position: absolute; left: 0; top: clamp(7px, 0.9vh, 9px);
+    width: 6px; height: 6px; border-radius: 50%; background: #34d399;
+  }
+
+  .param-table {
+    width: 100%; border-collapse: collapse;
+    font-size: clamp(10px, 0.9vw, 12px);
+    margin: clamp(6px, 1vh, 10px) 0;
+  }
+  .param-table th {
+    text-align: left; padding: 6px 10px;
+    color: #94a3b8; font-weight: 600; font-size: 10px;
+    text-transform: uppercase; letter-spacing: 1px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .param-table td {
+    padding: 5px 10px; color: #cbd5e1;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-family: 'JetBrains Mono', 'Consolas', monospace;
+  }
+  .param-table td:first-child { color: #e2e8f0; }
+
+  .slide-footer {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: auto; padding-top: clamp(6px, 1.2vh, 12px); flex-shrink: 0;
+    font-size: clamp(9px, 0.75vw, 10px); color: #475569;
+  }
+  .slide-footer .tag { background: rgba(255,255,255,0.05); color: #64748b; padding: 2px 8px; border-radius: 4px; }
+
+  .code-block {
+    background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px; padding: clamp(10px, 1.5vh, 14px);
+    font-family: 'JetBrains Mono', 'Consolas', monospace;
+    font-size: clamp(10px, 0.95vw, 12px); color: #cbd5e1;
+    line-height: 1.6; white-space: pre-wrap; word-break: break-all;
+    margin-bottom: clamp(8px, 1.2vh, 12px);
+  }
+  .code-comment { color: #6b7280; }
+  .code-highlight { color: #6ee7b7; font-weight: 600; }
+
+  .flow-row {
+    display: flex; align-items: center; gap: clamp(4px, 0.8vw, 8px);
+    justify-content: center; margin: clamp(8px, 1.5vh, 14px) 0;
+    flex-wrap: wrap;
+  }
+  .flow-step {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px; padding: clamp(8px, 1.2vh, 12px) clamp(10px, 1.5vw, 16px);
+    text-align: center;
+  }
+  .flow-step .step-name { font-size: clamp(10px, 0.9vw, 12px); font-weight: 700; color: #e2e8f0; margin-bottom: 2px; }
+  .flow-step .step-desc { font-size: clamp(8px, 0.7vw, 10px); color: #94a3b8; }
+  .flow-arrow { color: #10b981; font-size: clamp(14px, 1.5vw, 18px); font-weight: 700; flex-shrink: 0; }
+
+  .implication-box {
+    margin-top: auto; padding: clamp(7px, 1vh, 10px) 12px;
+    border-radius: 8px; flex-shrink: 0;
+    background: rgba(16,185,129,0.06); border: 1px solid rgba(16,185,129,0.2);
+  }
+  .implication-box h4 { color: #34d399; font-size: clamp(10px, 0.9vw, 11px); margin-bottom: 2px; }
+  .implication-box p { font-size: clamp(9px, 0.85vw, 10px); color: #6ee7b7; line-height: 1.45; }
+
+  .maturity-tiers {
+    display: flex; gap: clamp(4px, 0.6vw, 8px);
+    margin: clamp(8px, 1.5vh, 14px) 0;
+  }
+  .maturity-tier {
+    flex: 1;
+    background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 8px; padding: clamp(8px, 1.2vh, 12px);
+    text-align: center;
+  }
+  .maturity-tier .tier-num {
+    width: 32px; height: 32px; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 800; margin-bottom: 6px;
+  }
+  .maturity-tier h4 { font-size: clamp(10px, 0.85vw, 12px); margin-bottom: 4px; }
+  .maturity-tier p { font-size: clamp(8px, 0.7vw, 10px); color: #64748b; line-height: 1.3; }
+
+  .t1 .tier-num { background: rgba(148,163,184,0.15); color: #94a3b8; } .t1 { border-top: 2px solid #94a3b8; }
+  .t2 .tier-num { background: rgba(251,191,36,0.15); color: #fbbf24; } .t2 { border-top: 2px solid #fbbf24; }
+  .t3 .tier-num { background: rgba(59,130,246,0.15); color: #60a5fa; } .t3 { border-top: 2px solid #60a5fa; }
+  .t4 .tier-num { background: rgba(139,92,246,0.15); color: #8b5cf6; } .t4 { border-top: 2px solid #8b5cf6; }
+  .t5 .tier-num { background: rgba(16,185,129,0.15); color: #34d399; } .t5 { border-top: 2px solid #34d399; }
+
+  .pillar-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: clamp(8px, 1.2vh, 12px); margin: clamp(8px, 1.2vh, 12px) 0; }
+  .pillar-card {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 8px; padding: clamp(10px, 1.5vh, 14px);
+  }
+  .pillar-card .pillar-icon { font-size: clamp(18px, 2vw, 24px); margin-bottom: 6px; }
+  .pillar-card h4 { font-size: clamp(11px, 1vw, 13px); color: #6ee7b7; margin-bottom: 4px; }
+  .pillar-card ul { list-style: none; }
+  .pillar-card ul li {
+    font-size: clamp(9px, 0.75vw, 10px); color: #94a3b8; line-height: 1.5;
+    padding: 2px 0; padding-left: 12px; position: relative;
+  }
+  .pillar-card ul li::before { content: '•'; position: absolute; left: 0; color: #10b981; }
+
+  .do-dont { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(8px, 1.2vh, 12px); margin: clamp(8px, 1.2vh, 12px) 0; }
+  .do-card {
+    background: rgba(52,211,153,0.04); border: 1px solid rgba(52,211,153,0.15);
+    border-radius: 8px; padding: clamp(10px, 1.5vh, 14px);
+  }
+  .do-card h4 { color: #34d399; }
+  .do-card ul li { font-size: clamp(10px, 0.85vw, 11px); color: #6ee7b7; line-height: 1.5; padding: 2px 0; padding-left: 12px; position: relative; list-style: none; }
+  .do-card ul li::before { content: '✓'; position: absolute; left: 0; color: #34d399; font-weight: 600; }
+  .dont-card {
+    background: rgba(248,113,113,0.04); border: 1px solid rgba(248,113,113,0.15);
+    border-radius: 8px; padding: clamp(10px, 1.5vh, 14px);
+  }
+  .dont-card h4 { color: #f87171; }
+  .dont-card ul li { font-size: clamp(10px, 0.85vw, 11px); color: #fca5a5; line-height: 1.5; padding: 2px 0; padding-left: 12px; position: relative; list-style: none; }
+  .dont-card ul li::before { content: '✗'; position: absolute; left: 0; color: #f87171; font-weight: 600; }
+
+  .au-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: rgba(0,102,51,0.25); border: 1px solid rgba(0,153,76,0.3);
+    color: #4ade80; font-size: 10px; font-weight: 700;
+    padding: 2px 8px; border-radius: 4px; margin-left: 8px;
+    vertical-align: middle;
+  }
+
+  @media print {
+    body { overflow: visible; background: #060912; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .slide { position: relative !important; display: flex !important; margin-bottom: 25px; height: auto !important; }
+    .nav-bar { display: none; }
+    .deck { flex: none; height: auto !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="deck"><div class="slides">
+
+<!-- ===== SLIDE 1: TITLE ===== -->
+<div class="slide active" data-index="1">
+  <div class="s1-row">
+    <div>
+      <div class="slide-label">Maturity & Change</div>
+      <h1>Becoming <span class="gradient-text">AI-Enabled</span></h1>
+      <p class="subtitle" style="margin-top:4px;">A practical guide for companies navigating AI maturity and organisational change</p>
+    </div>
+    <div class="slide-meta">AI Knowledge Library<br>artefacts/ai-maturity-and-change</div>
+  </div>
+  <div class="s1-toc">
+    <div class="s1-toc-item"><div class="s1-toc-num">1</div><h4>Why Maturity Matters</h4><p>The data behind AI adoption</p></div>
+    <div class="s1-toc-item"><div class="s1-toc-num">2</div><h4>The Maturity Model</h4><p>5 stages every company moves through</p></div>
+    <div class="s1-toc-item"><div class="s1-toc-num">3</div><h4>The Journey</h4><p>Timeline & milestones across phases</p></div>
+    <div class="s1-toc-item"><div class="s1-toc-num">4</div><h4>People & Culture</h4><p>Skills, leadership, AI fluency</p></div>
+    <div class="s1-toc-item"><div class="s1-toc-num">5</div><h4>Process & Governance</h4><p>Ethics, risk, compliance frameworks</p></div>
+    <div class="s1-toc-item"><div class="s1-toc-num">6</div><h4>Technology & Data</h4><p>Infrastructure, MLOps, data readiness</p></div>
+    <div class="s1-toc-item"><div class="s1-toc-num">7</div><h4>Measuring ROI</h4><p>KPIs that actually work</p></div>
+    <div class="s1-toc-item"><div class="s1-toc-num">8</div><h4>Common Pitfalls</h4><p>What goes wrong & how to avoid it</p></div>
+    <div class="s1-toc-item"><div class="s1-toc-num">9</div><h4>Getting Started</h4><p>Concrete playbook for day one</p></div>
+    <div class="s1-toc-item"><div class="s1-toc-num">10</div><h4>AU Context</h4><p>Australian AI maturity landscape</p></div>
+  </div>
+  <div class="slide-footer"><span>AI Knowledge Library · github.com/kantan-sys/ai-knowledge-lib</span><span class="tag">1 / 10</span></div>
+</div>
+
+<!-- ===== SLIDE 2: WHY AI MATURITY MATTERS ===== -->
+<div class="slide" data-index="2">
+  <div class="dd-header">
+    <div><div class="slide-label">Part 1</div><h2>Why AI Maturity Matters</h2></div>
+    <div class="slide-meta">The business case for structured AI adoption</div>
+  </div>
+  <div class="dd-content">
+    <div class="dd-left">
+      <p class="body-text" style="margin-bottom:10px;">
+        Most companies are <strong style="color:#34d399;">experimenting</strong> with AI — but few have moved beyond pilots to scaled, production-grade deployments. The gap between experimentation and value capture is where maturity frameworks earn their keep.
+      </p>
+      <div class="stat-grid">
+        <div class="stat-card"><div class="stat-value accent">72%</div><div class="stat-label">Organisations that adopted AI in at least one business function (McKinsey 2024)</div></div>
+        <div class="stat-card"><div class="stat-value accent">~30%</div><div class="stat-label">Of those, have moved beyond experimentation to scaled deployment</div></div>
+        <div class="stat-card"><div class="stat-value amber">2.5×</div><div class="stat-label">Revenue growth advantage of AI-mature companies vs. laggards (BCG 2024)</div></div>
+        <div class="stat-card"><div class="stat-value amber">40%+</div><div class="stat-label">Average productivity gain reported by early enterprise AI adopters</div></div>
+      </div>
+      <h4 style="color:#e2e8f0;margin-bottom:6px;margin-top:10px;">The Pattern: Experimentation ≠ Transformation</h4>
+      <p class="body-text" style="margin-bottom:4px;">
+        Companies often get stuck in "pilot purgatory" — running dozens of proofs of concept that never make it to production. The reasons are rarely technical; they're organisational.
+      </p>
+      <ul class="key-points">
+        <li><strong>70% of AI projects</strong> fail to move from pilot to production (Gartner)</li>
+        <li><strong>Change management</strong> — not technology — is the #1 barrier to AI adoption at scale</li>
+        <li><strong>AI-mature companies</strong> don't have better models. They have better processes, governance, and culture</li>
+      </ul>
+    </div>
+    <div class="dd-right">
+      <h4 style="color:#e2e8f0;margin-bottom:6px;">What "AI-Mature" Actually Means</h4>
+      <p class="body-text" style="margin-bottom:6px;">AI maturity isn't about having the most advanced models or the biggest GPU clusters. It's about <strong style="color:#34d399;">embedding AI into how the organisation works</strong> — from strategy and governance through to daily operations and decision-making.</p>
+      <table class="param-table" style="margin-bottom:10px;">
+        <tr><th>Dimension</th><th>Immature</th><th>Mature</th></tr>
+        <tr><td>Strategy</td><td style="font-family:Inter,sans-serif;">Ad-hoc experiments</td><td style="font-family:Inter,sans-serif;">Board-level AI strategy</td></tr>
+        <tr><td>People</td><td style="font-family:Inter,sans-serif;">Few AI experts in silos</td><td style="font-family:Inter,sans-serif;">Organisation-wide AI fluency</td></tr>
+        <tr><td>Data</td><td style="font-family:Inter,sans-serif;">Scattered, low-quality</td><td style="font-family:Inter,sans-serif;">Governed, accessible, trusted</td></tr>
+        <tr><td>Governance</td><td style="font-family:Inter,sans-serif;">None or reactive</td><td style="font-family:Inter,sans-serif;">Proactive, embedded in lifecycle</td></tr>
+        <tr><td>Measurement</td><td style="font-family:Inter,sans-serif;">No formal KPIs</td><td style="font-family:Inter,sans-serif;">ROI tracked, A/B tested</td></tr>
+      </table>
+      <div class="implication-box"><h4>💡 Key Insight</h4><p>AI maturity is a <strong>leadership challenge</strong>, not a technology one. The companies winning with AI are those that have invested as much in change management, governance, and workforce upskilling as they have in models and infrastructure.</p></div>
+    </div>
+  </div>
+  <div class="slide-footer"><span>AI Knowledge Library · github.com/kantan-sys/ai-knowledge-lib</span><span class="tag">2 / 10</span></div>
+</div>
+
+<!-- ===== SLIDE 3: THE AI MATURITY MODEL ===== -->
+<div class="slide" data-index="3">
+  <div class="dd-header">
+    <div><div class="slide-label">Part 2</div><h2>The AI Maturity Model — 5 Stages</h2></div>
+    <div class="slide-meta">Every organisation progresses through these stages</div>
+  </div>
+  <div class="dd-content" style="flex-direction:column;">
+    <div class="maturity-tiers">
+      <div class="maturity-tier t1">
+        <div class="tier-num">1</div>
+        <h4>Exploring</h4>
+        <p>Individuals experiment with ChatGPT. No formal strategy. IT may block access.</p>
+      </div>
+      <div class="maturity-tier t2">
+        <div class="tier-num">2</div>
+        <h4>Experimenting</h4>
+        <p>Departmental pilots. First use cases identified. Central AI team forming.</p>
+      </div>
+      <div class="maturity-tier t3">
+        <div class="tier-num">3</div>
+        <h4>Operationalising</h4>
+        <p>Production deployments. Governance framework established. ROI tracked.</p>
+      </div>
+      <div class="maturity-tier t4">
+        <div class="tier-num">4</div>
+        <h4>Scaling</h4>
+        <p>AI across business units. Standardised MLOps. Workforce-wide AI fluency.</p>
+      </div>
+      <div class="maturity-tier t5">
+        <div class="tier-num">5</div>
+        <h4>AI-Native</h4>
+        <p>AI woven into strategy, products, and culture. Competitive advantage realised.</p>
+      </div>
+    </div>
+
+    <h4 style="color:#e2e8f0;margin-bottom:8px;">What Changes at Each Stage</h4>
+    <table class="param-table">
+      <tr><th>Stage</th><th>Strategy</th><th>People</th><th>Technology</th><th>Governance</th></tr>
+      <tr><td>1. Exploring</td><td style="font-family:Inter,sans-serif;">None — bottom-up curiosity</td><td style="font-family:Inter,sans-serif;">Individual power users</td><td style="font-family:Inter,sans-serif;">Consumer tools (ChatGPT, Claude)</td><td style="font-family:Inter,sans-serif;">None</td></tr>
+      <tr><td>2. Experimenting</td><td style="font-family:Inter,sans-serif;">Opportunity assessment, initial use cases</td><td style="font-family:Inter,sans-serif;">AI champions, data scientists hired</td><td style="font-family:Inter,sans-serif;">Enterprise LLM access, RAG pilots</td><td style="font-family:Inter,sans-serif;">Ethics principles defined</td></tr>
+      <tr><td>3. Operationalising</td><td style="font-family:Inter,sans-serif;">AI roadmap aligned to business goals</td><td style="font-family:Inter,sans-serif;">Cross-functional AI squads</td><td style="font-family:Inter,sans-serif;">MLOps pipeline, model registry</td><td style="font-family:Inter,sans-serif;">Risk framework, AI review board</td></tr>
+      <tr><td>4. Scaling</td><td style="font-family:Inter,sans-serif;">AI embedded in business unit plans</td><td style="font-family:Inter,sans-serif;">AI literacy program for all staff</td><td style="font-family:Inter,sans-serif;">Self-serve AI platform, feature store</td><td style="font-family:Inter,sans-serif;">Automated compliance, audit trails</td></tr>
+      <tr><td>5. AI-Native</td><td style="font-family:Inter,sans-serif;">AI-first business model innovation</td><td style="font-family:Inter,sans-serif;">AI fluency = core competency</td><td style="font-family:Inter,sans-serif;">AI in every product & process</td><td style="font-family:Inter,sans-serif;">Continuous governance, trust by design</td></tr>
+    </table>
+
+    <div class="implication-box"><h4>💡 Key Insight</h4><p>Most organisations are stuck between Stage 2 and Stage 3. The biggest leap isn't from experimentation to AI-native — it's from piloting to production. Focus your energy on crossing that gap.</p></div>
+  </div>
+  <div class="slide-footer"><span>AI Knowledge Library · github.com/kantan-sys/ai-knowledge-lib</span><span class="tag">3 / 10</span></div>
+</div>
+
+<!-- ===== SLIDE 4: THE AI ADOPTION JOURNEY ===== -->
+<div class="slide" data-index="4">
+  <div class="dd-header">
+    <div><div class="slide-label">Part 3</div><h2>The AI Adoption Journey — Timeline & Milestones</h2></div>
+    <div class="slide-meta">What to expect across each phase</div>
+  </div>
+  <div class="dd-content" style="flex-direction:column;">
+    <table class="param-table" style="margin-bottom:10px;">
+      <tr><th>Phase</th><th>Duration</th><th>Key Milestones</th><th>Success Indicators</th></tr>
+      <tr><td>Exploring</td><td>0-3 months</td><td style="font-family:Inter,sans-serif;">AI awareness sessions, exec education, initial use case brainstorming</td><td style="font-family:Inter,sans-serif;">Leadership buy-in, first 10 use cases identified</td></tr>
+      <tr><td>Experimenting</td><td>3-12 months</td><td style="font-family:Inter,sans-serif;">First 3-5 pilots launched, AI ethics policy drafted, central AI team established</td><td style="font-family:Inter,sans-serif;">1-2 pilots showing measurable value, executive sponsor assigned</td></tr>
+      <tr><td>Operationalising</td><td>12-24 months</td><td style="font-family:Inter,sans-serif;">First production deployment, governance framework live, MLOps tooling in place</td><td style="font-family:Inter,sans-serif;">ROI demonstrated on ≥1 use case, repeatable deployment process</td></tr>
+      <tr><td>Scaling</td><td>24-36 months</td><td style="font-family:Inter,sans-serif;">10+ AI use cases in production, AI literacy program rolled out, self-serve platform</td><td style="font-family:Inter,sans-serif;">AI contributing measurable revenue/cost impact, workforce AI-proficient</td></tr>
+      <tr><td>AI-Native</td><td>36+ months</td><td style="font-family:Inter,sans-serif;">AI-driven product innovation, continuous AI improvement cycles, market leadership</td><td style="font-family:Inter,sans-serif;">Competitive advantage from AI, AI-first culture embedded</td></tr>
+    </table>
+
+    <h4 style="color:#e2e8f0;margin-bottom:6px;margin-top:10px;">The Phases in Practice</h4>
+    <div class="flow-row">
+      <div class="flow-step"><div class="step-name">Months 1-3</div><div class="step-desc">Educate leaders<br>Identify use cases<br>Build awareness</div></div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step"><div class="step-name">Months 3-12</div><div class="step-desc">Run pilots<br>Build AI team<br>Draft governance</div></div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step"><div class="step-name">Months 12-24</div><div class="step-desc">Production deploy<br>Track ROI<br>Scale first wins</div></div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step"><div class="step-name">Years 2-3</div><div class="step-desc">Embed everywhere<br>Upskill workforce<br>Platform approach</div></div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step"><div class="step-name">Year 3+</div><div class="step-desc">AI as advantage<br>Product innovation<br>Continuous learning</div></div>
+    </div>
+
+    <div class="implication-box"><h4>💡 Key Insight</h4><p>The journey takes 2-4 years. There are no shortcuts — the companies that succeed invest consistently across all dimensions (strategy, people, process, technology). The biggest trap is expecting results in months rather than years.</p></div>
+  </div>
+  <div class="slide-footer"><span>AI Knowledge Library · github.com/kantan-sys/ai-knowledge-lib</span><span class="tag">4 / 10</span></div>
+</div>
+
+<!-- ===== SLIDE 5: PEOPLE & CULTURE ===== -->
+<div class="slide" data-index="5">
+  <div class="dd-header">
+    <div><div class="slide-label">Part 4</div><h2>People & Culture — The Hardest Part</h2></div>
+    <div class="slide-meta">Technology is 30%. Change management is 70%.</div>
+  </div>
+  <div class="dd-content">
+    <div class="dd-left">
+      <h4 style="color:#e2e8f0;margin-bottom:6px;">Building AI Fluency Across the Organisation</h4>
+      <p class="body-text" style="margin-bottom:6px;">
+        AI fluency isn't about making everyone a data scientist. It's about ensuring every employee understands <strong style="color:#34d399;">what AI can (and can't) do</strong>, how it applies to their role, and how to use AI tools responsibly.
+      </p>
+      <table class="param-table" style="margin-bottom:10px;">
+        <tr><th>Level</th><th>Who</th><th>What They Need</th></tr>
+        <tr><td>AI-Aware</td><td style="font-family:Inter,sans-serif;">All employees</td><td style="font-family:Inter,sans-serif;">Basic AI literacy, responsible use, prompting skills</td></tr>
+        <tr><td>AI-Capable</td><td style="font-family:Inter,sans-serif;">Knowledge workers, managers</td><td style="font-family:Inter,sans-serif;">Advanced prompting, data literacy, AI tool proficiency</td></tr>
+        <tr><td>AI-Proficient</td><td style="font-family:Inter,sans-serif;">Technical teams, analysts</td><td style="font-family:Inter,sans-serif;">ML fundamentals, RAG, API integration, evaluation</td></tr>
+        <tr><td>AI-Expert</td><td style="font-family:Inter,sans-serif;">Data scientists, ML engineers</td><td style="font-family:Inter,sans-serif;">Model training, fine-tuning, MLOps, architecture</td></tr>
+      </table>
+      <h4 style="color:#e2e8f0;margin-bottom:6px;margin-top:8px;">Leadership's Role</h4>
+      <ul class="key-points">
+        <li><strong>Executive sponsor.</strong> Every AI initiative needs a C-suite champion. Without one, it dies in committees</li>
+        <li><strong>Lead by example.</strong> Leaders who visibly use AI tools signal that AI adoption is expected, not optional</li>
+        <li><strong>Remove fear.</strong> Be explicit: AI is here to augment work, not replace workers. Frame it as a productivity tool, not a threat</li>
+        <li><strong>Create psychological safety.</strong> People need permission to experiment, fail, and learn with AI</li>
+      </ul>
+    </div>
+    <div class="dd-right">
+      <h4 style="color:#e2e8f0;margin-bottom:6px;">Common People & Culture Pitfalls</h4>
+      <div class="do-dont">
+        <div class="dont-card">
+          <h4>❌ Pitfalls</h4>
+          <ul>
+            <li>Mandating AI without training</li>
+            <li>Leaving AI to the IT department</li>
+            <li>Treating AI as a "tech project"</li>
+            <li>Ignoring employee anxiety about job displacement</li>
+            <li>Assuming people will "figure it out"</li>
+          </ul>
+        </div>
+        <div class="do-card">
+          <h4>✅ Best Practices</h4>
+          <ul>
+            <li>Invest in AI literacy programs for all staff</li>
+            <li>Create AI champions in every department</li>
+            <li>Celebrate AI wins publicly</li>
+            <li>Communicate transparently about AI's role</li>
+            <li>Build AI fluency into performance goals</li>
+          </ul>
+        </div>
+      </div>
+      <h4 style="color:#e2e8f0;margin-bottom:6px;">Building an AI Culture</h4>
+      <p class="body-text" style="margin-bottom:4px;">Culture eats strategy for breakfast — and it eats AI roadmaps for lunch. An AI-ready culture has three characteristics:</p>
+      <ul class="key-points">
+        <li><strong>Experiment-friendly.</strong> People feel safe trying AI tools without fear of looking foolish or making mistakes</li>
+        <li><strong>Data-informed.</strong> Decisions are made with evidence, not hierarchy. "What does the data say?" is the default question</li>
+        <li><strong>Learning-oriented.</strong> The organisation invests in continuous upskilling. AI isn't a one-time training — it's an ongoing capability build</li>
+      </ul>
+      <div class="implication-box"><h4>💡 Key Insight</h4><p>The #1 predictor of AI success isn't budget, data quality, or vendor choice — it's <strong>leadership commitment</strong>. Organisations where the CEO and executive team actively champion AI adoption are 3× more likely to achieve measurable ROI.</p></div>
+    </div>
+  </div>
+  <div class="slide-footer"><span>AI Knowledge Library · github.com/kantan-sys/ai-knowledge-lib</span><span class="tag">5 / 10</span></div>
+</div>
+
+<!-- ===== SLIDE 6: PROCESS & GOVERNANCE ===== -->
+<div class="slide" data-index="6">
+  <div class="dd-header">
+    <div><div class="slide-label">Part 5</div><h2>Process & Governance — Guardrails for Scale</h2></div>
+    <div class="slide-meta">The frameworks that make AI safe, compliant, and sustainable</div>
+  </div>
+  <div class="dd-content">
+    <div class="dd-left">
+      <h4 style="color:#e2e8f0;margin-bottom:6px;">The AI Governance Stack</h4>
+      <p class="body-text" style="margin-bottom:6px;">
+        Governance isn't bureaucracy — it's the structure that enables <strong style="color:#34d399;">safe, fast, and repeatable</strong> AI deployment. Without it, every new use case becomes a one-off project that can't scale.
+      </p>
+      <table class="param-table" style="margin-bottom:10px;">
+        <tr><th>Layer</th><th>What It Covers</th><th>Key Artefacts</th></tr>
+        <tr><td>Ethics & Values</td><td style="font-family:Inter,sans-serif;">Principles guiding all AI use</td><td style="font-family:Inter,sans-serif;">AI ethics charter, responsible AI policy</td></tr>
+        <tr><td>Risk Management</td><td style="font-family:Inter,sans-serif;">Identifying, assessing, mitigating AI risks</td><td style="font-family:Inter,sans-serif;">AI risk register, impact assessments</td></tr>
+        <tr><td>Model Lifecycle</td><td style="font-family:Inter,sans-serif;">How models are built, tested, deployed, retired</td><td style="font-family:Inter,sans-serif;">Model cards, approval process, monitoring</td></tr>
+        <tr><td>Data Governance</td><td style="font-family:Inter,sans-serif;">Data quality, privacy, access controls</td><td style="font-family:Inter,sans-serif;">Data catalogue, lineage, PII handling</td></tr>
+        <tr><td>Compliance</td><td style="font-family:Inter,sans-serif;">Regulatory requirements (EU AI Act, etc.)</td><td style="font-family:Inter,sans-serif;">Compliance checklists, audit trails</td></tr>
+      </table>
+      <h4 style="color:#e2e8f0;margin-bottom:6px;">AI Review Board — The Engine of Governance</h4>
+      <p class="body-text" style="margin-bottom:4px;">A cross-functional board (legal, ethics, technical, business) that reviews AI use cases before they go to production. This isn't a blocker — it's an accelerator that prevents costly mistakes.</p>
+    </div>
+    <div class="dd-right">
+      <h4 style="color:#e2e8f0;margin-bottom:6px;">The AI Project Lifecycle</h4>
+      <div class="flow-row" style="margin-bottom:8px;">
+        <div class="flow-step"><div class="step-name">Ideate</div><div class="step-desc">Propose use case<br>→ Ethics check</div></div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step"><div class="step-name">Assess</div><div class="step-desc">Risk & impact<br>→ Go/no-go</div></div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step"><div class="step-name">Build</div><div class="step-desc">Develop & test<br>→ Peer review</div></div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step"><div class="step-name">Deploy</div><div class="step-desc">Production release<br>→ Monitor</div></div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step"><div class="step-name">Retire</div><div class="step-desc">Sunset model<br>→ Lessons learned</div></div>
+      </div>
+      <h4 style="color:#e2e8f0;margin-bottom:6px;">Regulatory Landscape (2025-2026)</h4>
+      <ul class="key-points" style="margin-bottom:8px;">
+        <li><strong>EU AI Act.</strong> Tiered risk framework. High-risk AI systems face the strictest requirements. Enforcement began Aug 2024, full compliance by 2026</li>
+        <li><strong>US Executive Order.</strong> Requires safety testing, transparency reporting, and watermarking for frontier models</li>
+        <li><strong>Australia.</strong> Voluntary AI Ethics Principles (8 principles). Mandatory guardrails under active government consultation. Increasing alignment with EU approach</li>
+        <li><strong>ISO 42001.</strong> First international standard for AI management systems (published Dec 2023). Provides certifiable framework</li>
+      </ul>
+      <div class="implication-box"><h4>💡 Key Insight</h4><p>Build governance proportionally. A 50-person startup doesn't need the same governance as a bank. Start with a one-page AI ethics policy and a simple risk checklist. Add complexity only as you scale.</p></div>
+    </div>
+  </div>
+  <div class="slide-footer"><span>AI Knowledge Library · github.com/kantan-sys/ai-knowledge-lib</span><span class="tag">6 / 10</span></div>
+</div>
+
+<!-- ===== SLIDE 7: TECHNOLOGY & DATA ===== -->
+<div class="slide" data-index="7">
+  <div class="dd-header">
+    <div><div class="slide-label">Part 6</div><h2>Technology & Data — The Foundation</h2></div>
+    <div class="slide-meta">Infrastructure, tools, and data readiness</div>
+  </div>
+  <div class="dd-content">
+    <div class="dd-left">
+      <h4 style="color:#e2e8f0;margin-bottom:6px;">The Technology Stack by Maturity Stage</h4>
+      <table class="param-table" style="margin-bottom:10px;">
+        <tr><th>Stage</th><th>Model Access</th><th>Infrastructure</th><th>Data</th></tr>
+        <tr><td>Exploring</td><td style="font-family:Inter,sans-serif;">ChatGPT, Claude (consumer)</td><td style="font-family:Inter,sans-serif;">None needed</td><td style="font-family:Inter,sans-serif;">Ad-hoc</td></tr>
+        <tr><td>Experimenting</td><td style="font-family:Inter,sans-serif;">API access, enterprise accounts</td><td style="font-family:Inter,sans-serif;">Cloud sandbox</td><td style="font-family:Inter,sans-serif;">Initial data audit</td></tr>
+        <tr><td>Operationalising</td><td style="font-family:Inter,sans-serif;">Managed models, RAG pipelines</td><td style="font-family:Inter,sans-serif;">MLOps platform, vector DB</td><td style="font-family:Inter,sans-serif;">Data lake/lakehouse</td></tr>
+        <tr><td>Scaling</td><td style="font-family:Inter,sans-serif;">Multi-model, fine-tuning</td><td style="font-family:Inter,sans-serif;">Self-serve AI platform, feature store</td><td style="font-family:Inter,sans-serif;">Data mesh, data products</td></tr>
+        <tr><td>AI-Native</td><td style="font-family:Inter,sans-serif;">Custom models, continuous training</td><td style="font-family:Inter,sans-serif;">AI-optimised infra, edge deployment</td><td style="font-family:Inter,sans-serif;">Real-time, governed, trusted</td></tr>
+      </table>
+      <h4 style="color:#e2e8f0;margin-bottom:6px;">Data Readiness — The Hardest Pre-requisite</h4>
+      <p class="body-text" style="margin-bottom:4px;">AI is only as good as the data it's built on. Before investing in models, invest in data:</p>
+      <ul class="key-points" style="margin-bottom:8px;">
+        <li><strong>Data quality assessment.</strong> How clean, complete, and consistent is your data? Garbage in = garbage out</li>
+        <li><strong>Data accessibility.</strong> Can your AI systems actually access the data they need? Data silos are the #1 blocker</li>
+        <li><strong>Data governance.</strong> Who owns the data? Is PII protected? Is there a data catalogue?</li>
+        <li><strong>Data for RAG.</strong> Most enterprise AI starts with retrieval-augmented generation — which requires well-structured, searchable knowledge bases</li>
+      </ul>
+    </div>
+    <div class="dd-right">
+      <h4 style="color:#e2e8f0;margin-bottom:6px;">Build vs. Buy Decision Framework</h4>
+      <table class="param-table" style="margin-bottom:10px;">
+        <tr><th>When to Buy</th><th>When to Build</th></tr>
+        <tr><td style="font-family:Inter,sans-serif;">Standard use cases (chatbots, search, summarisation)</td><td style="font-family:Inter,sans-serif;">Core IP or competitive differentiator</td></tr>
+        <tr><td style="font-family:Inter,sans-serif;">Limited internal ML expertise</td><td style="font-family:Inter,sans-serif;">Strong in-house data science team</td></tr>
+        <tr><td style="font-family:Inter,sans-serif;">Need to move fast</td><td style="font-family:Inter,sans-serif;">Unique data or domain requirements</td></tr>
+        <tr><td style="font-family:Inter,sans-serif;">Well-served by existing platforms</td><td style="font-family:Inter,sans-serif;">Need for deep customisation</td></tr>
+      </table>
+      <h4 style="color:#e2e8f0;margin-bottom:6px;">The 80/20 Rule of Enterprise AI</h4>
+      <div class="code-block" style="margin-bottom:8px;">
+<span class="code-comment">// Most enterprise AI value comes from:</span>
+<span class="code-highlight">80%</span> — Using existing models (API/fine-tuned)
+<span class="code-highlight">15%</span> — RAG and prompt engineering
+<span class="code-highlight"> 5%</span> — Training custom models from scratch
+
+<span class="code-comment">// Most companies over-invest in the 5%</span>
+<span class="code-comment">// and under-invest in the 80%</span>
+      </div>
+      <div class="implication-box"><h4>💡 Key Insight</h4><p>Start with APIs. Graduate to RAG. Only build custom models when you have a <strong>clear, defensible reason</strong> — proprietary data, unique domain requirements, or cost at scale. The fastest path to AI value is using what already exists.</p></div>
+    </div>
+  </div>
+  <div class="slide-footer"><span>AI Knowledge Library · github.com/kantan-sys/ai-knowledge-lib</span><span class="tag">7 / 10</span></div>
+</div>
+
+<!-- ===== SLIDE 8: MEASURING ROI ===== -->
+<div class="slide" data-index="8">
+  <div class="dd-header">
+    <div><div class="slide-label">Part 7</div><h2>Measuring AI ROI — KPIs That Actually Work</h2></div>
+    <div class="slide-meta">From vague promises to measurable impact</div>
+  </div>
+  <div class="dd-content">
+    <div class="dd-left">
+      <h4 style="color:#e2e8f0;margin-bottom:6px;">The ROI Measurement Framework</h4>
+      <p class="body-text" style="margin-bottom:6px;">AI ROI isn't magic — it's measured in the same terms as any other business investment. The key is to <strong style="color:#34d399;">define metrics before you deploy</strong>, not after.</p>
+      <table class="param-table" style="margin-bottom:10px;">
+        <tr><th>Category</th><th>Metrics</th><th>Example</th></tr>
+        <tr><td>Productivity</td><td style="font-family:Inter,sans-serif;">Time saved, tasks completed, throughput</td><td style="font-family:Inter,sans-serif;">Customer service: 60% faster resolution time</td></tr>
+        <tr><td>Cost Reduction</td><td style="font-family:Inter,sans-serif;">Cost per unit, automation rate, error reduction</td><td style="font-family:Inter,sans-serif;">Document processing: 80% reduction in manual review</td></tr>
+        <tr><td>Revenue Growth</td><td style="font-family:Inter,sans-serif;">Conversion rate, deal size, customer lifetime value</td><td style="font-family:Inter,sans-serif;">Sales: 25% increase in qualified leads</td></tr>
+        <tr><td>Quality</td><td style="font-family:Inter,sans-serif;">Error rate, accuracy, customer satisfaction</td><td style="font-family:Inter,sans-serif;">Code review: 35% fewer production bugs</td></tr>
+        <tr><td>Speed</td><td style="font-family:Inter,sans-serif;">Time-to-market, cycle time, response time</td><td style="font-family:Inter,sans-serif;">Content: 3× faster first draft creation</td></tr>
+      </table>
+      <h4 style="color:#e2e8f0;margin-bottom:6px;">The AI ROI Equation</h4>
+      <div class="code-block" style="margin-bottom:8px;">
+<span class="code-comment">// Simple AI ROI calculation:</span>
+AI ROI = (Value Created - Cost of AI) / Cost of AI
+
+Value Created  = Productivity gains + Revenue uplift + Cost avoidance
+Cost of AI     = Model costs + Infrastructure + People + Change mgmt
+
+<span class="code-comment">// Most companies underestimate Cost of AI by 2-3×
+// and overestimate Value Created in Year 1</span>
+      </div>
+    </div>
+    <div class="dd-right">
+      <h4 style="color:#e2e8f0;margin-bottom:6px;">Realistic ROI Timelines</h4>
+      <table class="param-table" style="margin-bottom:10px;">
+        <tr><th>Use Case Type</th><th>Time to First ROI</th><th>Typical Year 1 ROI</th></tr>
+        <tr><td>Productivity tools (Copilot, etc.)</td><td style="font-family:Inter,sans-serif;">1-3 months</td><td style="font-family:Inter,sans-serif;">30-55% productivity gain</td></tr>
+        <tr><td>Customer service AI</td><td style="font-family:Inter,sans-serif;">3-6 months</td><td style="font-family:Inter,sans-serif;">40-60% cost reduction</td></tr>
+        <tr><td>Internal knowledge base (RAG)</td><td style="font-family:Inter,sans-serif;">2-4 months</td><td style="font-family:Inter,sans-serif;">50-70% faster info retrieval</td></tr>
+        <tr><td>Custom AI application</td><td style="font-family:Inter,sans-serif;">6-12 months</td><td style="font-family:Inter,sans-serif;">Varies widely</td></tr>
+        <tr><td>AI-driven product innovation</td><td style="font-family:Inter,sans-serif;">12-24 months</td><td style="font-family:Inter,sans-serif;">New revenue streams</td></tr>
+      </table>
+      <h4 style="color:#e2e8f0;margin-bottom:6px;">How to Track AI ROI</h4>
+      <ul class="key-points" style="margin-bottom:8px;">
+        <li><strong>Baseline before you start.</strong> Measure current performance before deploying AI. Without a baseline, ROI is guesswork</li>
+        <li><strong>A/B test where possible.</strong> Compare AI-assisted vs. non-AI workflows. Quantify the delta</li>
+        <li><strong>Track leading and lagging indicators.</strong> Leading: adoption rate, prompts per day. Lagging: cost savings, revenue impact</li>
+        <li><strong>Review quarterly.</strong> AI ROI evolves. What's true at month 3 may not hold at month 12</li>
+      </ul>
+      <div class="implication-box"><h4>💡 Key Insight</h4><p>Productivity gains from AI tools (Copilot, ChatGPT) are <strong>real and measurable</strong> — 30-55% faster task completion is consistently reported. Start your ROI measurement here. These quick wins fund the longer-term strategic AI investments.</p></div>
+    </div>
+  </div>
+  <div class="slide-footer"><span>AI Knowledge Library · github.com/kantan-sys/ai-knowledge-lib</span><span class="tag">8 / 10</span></div>
+</div>
+
+<!-- ===== SLIDE 9: COMMON PITFALLS ===== -->
+<div class="slide" data-index="9">
+  <div class="dd-header">
+    <div><div class="slide-label">Part 8</div><h2>Common Pitfalls — What Goes Wrong</h2></div>
+    <div class="slide-meta">And how to avoid them</div>
+  </div>
+  <div class="dd-content">
+    <div class="dd-left">
+      <h4 style="color:#e2e8f0;margin-bottom:6px;">The Top 8 AI Adoption Pitfalls</h4>
+      <table class="param-table" style="margin-bottom:10px;">
+        <tr><th>#</th><th>Pitfall</th><th>How to Avoid</th></tr>
+        <tr><td>1</td><td style="font-family:Inter,sans-serif;">No clear strategy — AI projects launched without business alignment</td><td style="font-family:Inter,sans-serif;">Start with business problems, not technology. Every AI project must have a named business sponsor and measurable success criteria</td></tr>
+        <tr><td>2</td><td style="font-family:Inter,sans-serif;">Data debt — poor quality, siloed, inaccessible data</td><td style="font-family:Inter,sans-serif;">Audit data quality before building. Invest in data infrastructure. "Garbage in, garbage out" applies exponentially to AI</td></tr>
+        <tr><td>3</td><td style="font-family:Inter,sans-serif;">Talent gap — can't hire or retain AI expertise</td><td style="font-family:Inter,sans-serif;">Upskill existing staff. Partner with consultancies for initial builds. Build a culture that attracts AI talent</td></tr>
+        <tr><td>4</td><td style="font-family:Inter,sans-serif;">AI washing — claiming AI capabilities you don't have</td><td style="font-family:Inter,sans-serif;">Be honest about maturity. Customers and investors can tell. Focus on real use cases, not press releases</td></tr>
+        <tr><td>5</td><td style="font-family:Inter,sans-serif;">Pilot purgatory — stuck in endless experimentation</td><td style="font-family:Inter,sans-serif;">Set a "pilot-to-production" timeline for every project. If it can't ship in 6 months, kill it</td></tr>
+        <tr><td>6</td><td style="font-family:Inter,sans-serif;">Ignoring change management — treating AI as a tech project</td><td style="font-family:Inter,sans-serif;">Budget 30-50% of AI project spend on change management, training, and communication</td></tr>
+        <tr><td>7</td><td style="font-family:Inter,sans-serif;">No governance — deploying AI without safety guardrails</td><td style="font-family:Inter,sans-serif;">Start with a simple AI ethics policy. Scale governance as you scale AI. One bad incident can destroy trust</td></tr>
+        <tr><td>8</td><td style="font-family:Inter,sans-serif;">Expecting overnight transformation</td><td style="font-family:Inter,sans-serif;">AI maturity takes 2-4 years. Set realistic expectations with the board. Quick wins fund the journey</td></tr>
+      </table>
+    </div>
+    <div class="dd-right">
+      <h4 style="color:#e2e8f0;margin-bottom:6px;">The "Pilot Purgatory" Trap</h4>
+      <p class="body-text" style="margin-bottom:6px;">
+        This is the most dangerous pitfall. Companies run dozens of AI pilots — each exciting, each promising — but none make it to production. The result: millions spent, zero ROI, and a board that's lost faith in AI.
+      </p>
+      <div class="do-dont">
+        <div class="dont-card">
+          <h4>❌ Pilot Purgatory Pattern</h4>
+          <ul>
+            <li>Launch pilot → Get excited → Hit integration challenges → Move to next shiny pilot</li>
+            <li>No production criteria defined upfront</li>
+            <li>IT and business teams not aligned</li>
+            <li>Success measured by "pilot completion" not business impact</li>
+          </ul>
+        </div>
+        <div class="do-card">
+          <h4>✅ Production-First Pattern</h4>
+          <ul>
+            <li>Define production criteria before pilot starts</li>
+            <li>Include IT, legal, and compliance from day one</li>
+            <li>Set a hard deadline: ship or kill in 6 months</li>
+            <li>Measure success by business KPIs, not technical metrics</li>
+          </ul>
+        </div>
+      </div>
+      <div class="implication-box"><h4>💡 Key Insight</h4><p>The companies that succeed with AI aren't the ones with the best technology. They're the ones that <strong>treat AI adoption as an organisational change program</strong> — with executive sponsorship, change management investment, and a relentless focus on production deployment over pilot perfection.</p></div>
+    </div>
+  </div>
+  <div class="slide-footer"><span>AI Knowledge Library · github.com/kantan-sys/ai-knowledge-lib</span><span class="tag">9 / 10</span></div>
+</div>
+
+<!-- ===== SLIDE 10: GETTING STARTED ===== -->
+<div class="slide" data-index="10">
+  <div class="dd-header">
+    <div><div class="slide-label">Part 9</div><h2>Getting Started — A Practical Playbook <span class="au-badge">AU</span></h2></div>
+    <div class="slide-meta">Concrete steps for companies beginning their AI journey</div>
+  </div>
+  <div class="dd-content">
+    <div class="dd-left">
+      <h4 style="color:#e2e8f0;margin-bottom:6px;">The First 90 Days</h4>
+      <div class="code-block" style="margin-bottom:8px;">
+<span class="code-highlight">Month 1: Foundation</span>
+[ ] Hold AI awareness session for leadership team
+[ ] Identify 10-15 potential AI use cases
+[ ] Prioritise top 3 by business impact × feasibility
+[ ] Assign an executive sponsor for AI
+
+<span class="code-highlight">Month 2: Enable</span>
+[ ] Set up enterprise AI tool access (Copilot, ChatGPT Team)
+[ ] Run AI literacy workshop for department heads
+[ ] Draft 1-page AI ethics and acceptable use policy
+[ ] Identify data readiness gaps for top 3 use cases
+
+<span class="code-highlight">Month 3: First Moves</span>
+[ ] Launch first 2-3 AI pilots with clear success criteria
+[ ] Establish AI governance working group (legal, IT, ethics)
+[ ] Begin tracking AI usage and productivity metrics
+[ ] Communicate AI strategy to all employees
+      </div>
+    </div>
+    <div class="dd-right">
+      <h4 style="color:#e2e8f0;margin-bottom:6px;">Australian AI Maturity Landscape</h4>
+      <p class="body-text" style="margin-bottom:4px;">Australia has specific opportunities and challenges in AI adoption:</p>
+      <ul class="key-points" style="margin-bottom:8px;">
+        <li><strong>National AI Centre (NAIC).</strong> Established under CSIRO to coordinate Australia's AI ecosystem. Publishes maturity guides and use case libraries</li>
+        <li><strong>Australia's AI Ethics Principles.</strong> 8 voluntary principles. Increasingly expected by government procurement. Likely to become mandatory within 2-3 years</li>
+        <li><strong>Skills shortage.</strong> Australia faces a significant AI talent gap. Upskilling existing workforce is critical — can't rely on hiring alone</li>
+        <li><strong>SME challenge.</strong> 97% of Australian businesses are SMEs. Most need turnkey AI solutions, not custom builds. Cloud-based AI tools (Copilot, ChatGPT Team) are the pragmatic path</li>
+        <li><strong>Data sovereignty.</strong> Australian government and regulated industries increasingly require onshore data processing. Factor this into AI infrastructure decisions</li>
+        <li><strong>Industry strengths.</strong> Mining, agtech, health, and financial services — sectors where Australian AI can lead globally</li>
+      </ul>
+      <div class="implication-box"><h4>💡 Key Insight</h4><p>The best time to start AI adoption was 2 years ago. The second-best time is now. Start small, measure religiously, invest in your people, and treat AI maturity as a journey — not a destination. Companies that begin today will have a 2-3 year head start on those that wait.</p></div>
+    </div>
+  </div>
+  <div class="slide-footer"><span>AI Knowledge Library · github.com/kantan-sys/ai-knowledge-lib</span><span class="tag">10 / 10</span></div>
+</div>
+
+</div></div>
+
+<div class="nav-bar">
+  <button class="nav-btn" id="prevBtn" onclick="navigate(-1)" disabled>←</button>
+  <span class="slide-counter" id="counter">1 / 10</span>
+  <button class="nav-btn" id="nextBtn" onclick="navigate(1)">→</button>
+</div>
+
+<script>
+  let currentSlide = 1;
+  const totalSlides = 10;
+
+  function navigate(dir) {
+    const next = currentSlide + dir;
+    if (next < 1 || next > totalSlides) return;
+    document.querySelector(`.slide[data-index="${currentSlide}"]`).classList.remove('active');
+    document.querySelector(`.slide[data-index="${next}"]`).classList.add('active');
+    currentSlide = next;
+    updateNav();
+  }
+
+  function updateNav() {
+    document.getElementById('counter').textContent = `${currentSlide} / ${totalSlides}`;
+    document.getElementById('prevBtn').disabled = currentSlide === 1;
+    document.getElementById('nextBtn').disabled = currentSlide === totalSlides;
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+      e.preventDefault(); navigate(1);
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault(); navigate(-1);
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      document.querySelector(`.slide[data-index="${currentSlide}"]`).classList.remove('active');
+      currentSlide = 1;
+      document.querySelector('.slide[data-index="1"]').classList.add('active');
+      updateNav();
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      document.querySelector(`.slide[data-index="${currentSlide}"]`).classList.remove('active');
+      currentSlide = totalSlides;
+      document.querySelector(`.slide[data-index="${totalSlides}"]`).classList.add('active');
+      updateNav();
+    }
+  });
+</script>
+
+</body>
+</html>
